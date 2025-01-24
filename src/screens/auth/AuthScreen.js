@@ -1,53 +1,61 @@
 import React, { useState } from "react";
 import styled from "styled-components/native";
-import {
-  View,
-  TextInput,
-  Button,
-  ActivityIndicator,
-  Alert,
-} from "react-native";
-import { auth, db } from "../../firebase/firebaseConfig";
+import { Alert, ActivityIndicator } from "react-native";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
-import { setDoc, doc, getDoc } from "firebase/firestore";
+import { setDoc, doc } from "firebase/firestore";
+import { auth, db } from "./../../firebase/firebaseConfig";
 
 const AuthScreen = ({ navigation, route }) => {
+  const { role } = route.params; // "usuario" o "conductor"
   const [isLogin, setIsLogin] = useState(true);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [formData, setFormData] = useState({
+    name: "",
+    lastName: "",
+    phone: "",
+    dni: "",
+    taxiId: "",
+    license: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
   const [isLoading, setIsLoading] = useState(false);
-  const role = route?.params?.role;
 
-  if (!role) {
-    Alert.alert("Error crítico", "El rol no está definido. Por favor, regresa e inténtalo de nuevo.");
-    navigation.goBack();
-    return null;
-  }
-
-  const toggleAuthMode = () => {
-    setIsLogin(!isLogin);
-    setPassword("");
-    setConfirmPassword("");
+  const handleInputChange = (field, value) => {
+    setFormData({ ...formData, [field]: value });
   };
 
   const validateInputs = () => {
+    const { email, password, confirmPassword, name, phone } = formData;
+
     if (!email || !password) {
-      Alert.alert("Error", "Completa todos los campos.");
+      Alert.alert("Error", "Todos los campos son obligatorios.");
       return false;
     }
-    if (!/\S+@\S+\.\S+/.test(email)) {
-      Alert.alert("Error", "Correo inválido.");
-      return false;
-    }
-    if (password.length < 6) {
+
+    if (!isLogin && password.length < 6) {
       Alert.alert("Error", "La contraseña debe tener al menos 6 caracteres.");
       return false;
     }
+
     if (!isLogin && password !== confirmPassword) {
       Alert.alert("Error", "Las contraseñas no coinciden.");
       return false;
     }
+
+    if (!isLogin && role === "conductor") {
+      const { dni, taxiId, license } = formData;
+      if (!name || !phone || !dni || !taxiId || !license) {
+        Alert.alert("Error", "Todos los campos de conductor son obligatorios.");
+        return false;
+      }
+    }
+
+    if (!isLogin && role === "usuario" && (!name || !phone)) {
+      Alert.alert("Error", "Todos los campos de usuario son obligatorios.");
+      return false;
+    }
+
     return true;
   };
 
@@ -55,30 +63,43 @@ const AuthScreen = ({ navigation, route }) => {
     if (!validateInputs()) return;
 
     setIsLoading(true);
+    const { email, password, confirmPassword, ...profileData } = formData;
+
     try {
       if (isLogin) {
+        // Lógica para iniciar sesión
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        const userDoc = await getDoc(doc(db, "users", userCredential.user.uid));
-        if (userDoc.exists() && userDoc.data().role === role) {
-          navigation.navigate(role === "usuario" ? "UserNavigator" : "DriverNavigator");
-        } else {
-          throw new Error("Acceso denegado para este rol.");
-        }
+        Alert.alert("Inicio de Sesión", "Has iniciado sesión correctamente.");
+        navigation.navigate(role === "usuario" ? "UserNavigator" : "DriverNavigator");
       } else {
+        // Lógica para registro
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        await setDoc(doc(db, "users", userCredential.user.uid), { email, role });
-        Alert.alert("Éxito", "Registro completado. Ahora puedes iniciar sesión.");
-        toggleAuthMode();
+
+        // Guardar datos adicionales en Firestore
+        await setDoc(doc(db, role === "usuario" ? "usuarios" : "conductores", userCredential.user.uid), {
+          ...profileData,
+          role,
+          email,
+          createdAt: new Date().toISOString(),
+        });
+
+        Alert.alert("Registro Exitoso", "Tu cuenta ha sido creada.");
+        navigation.navigate(role === "usuario" ? "UserNavigator" : "DriverNavigator");
       }
     } catch (error) {
-      const errorMessage =
-        error.code === "auth/email-already-in-use"
-          ? "El correo ya está en uso."
-          : error.code === "auth/user-not-found"
-          ? "Usuario no encontrado."
-          : error.code === "auth/wrong-password"
-          ? "Contraseña incorrecta."
-          : error.message || "Error inesperado.";
+      console.error("Error durante el registro/inicio de sesión:", error);
+      let errorMessage = "Ocurrió un error inesperado.";
+      if (error.code === "auth/email-already-in-use") {
+        errorMessage = "Este correo ya está registrado.";
+      } else if (error.code === "auth/weak-password") {
+        errorMessage = "La contraseña debe tener al menos 6 caracteres.";
+      } else if (error.code === "auth/invalid-email") {
+        errorMessage = "El correo electrónico no es válido.";
+      } else if (error.code === "auth/user-not-found") {
+        errorMessage = "No se encontró una cuenta con este correo.";
+      } else if (error.code === "auth/wrong-password") {
+        errorMessage = "La contraseña es incorrecta.";
+      }
       Alert.alert("Error", errorMessage);
     } finally {
       setIsLoading(false);
@@ -87,36 +108,77 @@ const AuthScreen = ({ navigation, route }) => {
 
   return (
     <Container>
-      <Title>{isLogin ? "Iniciar Sesión" : "Registro"} como {role === "usuario" ? "Usuario" : "Conductor"}</Title>
+      <Title>{isLogin ? "Iniciar Sesión" : `Registro como ${role === "usuario" ? "Usuario" : "Conductor"}`}</Title>
+
+      {!isLogin && (
+        <>
+          <Input
+            placeholder="Nombre"
+            value={formData.name}
+            onChangeText={(value) => handleInputChange("name", value)}
+          />
+          <Input
+            placeholder="Teléfono"
+            value={formData.phone}
+            onChangeText={(value) => handleInputChange("phone", value)}
+            keyboardType="phone-pad"
+          />
+        </>
+      )}
+      {role === "conductor" && !isLogin && (
+        <>
+          <Input
+            placeholder="Apellido"
+            value={formData.lastName}
+            onChangeText={(value) => handleInputChange("lastName", value)}
+          />
+          <Input
+            placeholder="DNI/NIE"
+            value={formData.dni}
+            onChangeText={(value) => handleInputChange("dni", value)}
+          />
+          <Input
+            placeholder="Número de Carnet de Taxista"
+            value={formData.taxiId}
+            onChangeText={(value) => handleInputChange("taxiId", value)}
+          />
+          <Input
+            placeholder="Número de Licencia"
+            value={formData.license}
+            onChangeText={(value) => handleInputChange("license", value)}
+          />
+        </>
+      )}
+
       <Input
         placeholder="Correo Electrónico"
-        value={email}
-        onChangeText={setEmail}
+        value={formData.email}
+        onChangeText={(value) => handleInputChange("email", value)}
         keyboardType="email-address"
       />
       <Input
         placeholder="Contraseña"
-        value={password}
-        onChangeText={setPassword}
+        value={formData.password}
+        onChangeText={(value) => handleInputChange("password", value)}
         secureTextEntry
       />
       {!isLogin && (
         <Input
           placeholder="Confirmar Contraseña"
-          value={confirmPassword}
-          onChangeText={setConfirmPassword}
+          value={formData.confirmPassword}
+          onChangeText={(value) => handleInputChange("confirmPassword", value)}
           secureTextEntry
         />
       )}
+
       {isLoading ? (
         <ActivityIndicator size="large" color="#0000ff" />
       ) : (
-          
         <Button title={isLogin ? "Entrar" : "Registrarse"} onPress={handleAuth} />
       )}
-      <Button
+      <SwitchButton
         title={isLogin ? "¿No tienes cuenta? Regístrate" : "¿Ya tienes cuenta? Inicia sesión"}
-        onPress={toggleAuthMode}
+        onPress={() => setIsLogin(!isLogin)}
       />
     </Container>
   );
@@ -143,7 +205,9 @@ const Input = styled.TextInput`
   border-radius: 5px;
 `;
 
+const Button = styled.Button``;
+
+const SwitchButton = styled.Button``;
+
 export default AuthScreen;
-
-
 

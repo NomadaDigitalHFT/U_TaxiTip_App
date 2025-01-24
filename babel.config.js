@@ -1,20 +1,27 @@
 module.exports = function (api) {
   api.cache(true);
   return {
-    presets: ["babel-preset-expo"],
+    presets: [
+      "babel-preset-expo" // Aquí no debería haber caracteres extraños
+    ],
     plugins: [
       [
-        'module:react-native-dotenv',
+        "module:react-native-dotenv", // Plugin para manejar variables de entorno
         {
-          moduleName: '@env',
-          path: '.env',
-          blocklist: null,
-          allowlist: null,
-          safe: false,
-          allowUndefined: true,
+          moduleName: "@env",
+          path: ".env",
+          allowlist: [
+            "API_KEY",
+            "AUTH_DOMAIN",
+            "PROJECT_ID",
+            "STORAGE_BUCKET",
+            "MESSAGING_SENDER_ID",
+            "APP_ID",
+            "MEASUREMENT_ID",
+          ],
         },
       ],
-      'react-native-reanimated/plugin', // Asegúrate de que este esté al final
+      "react-native-reanimated/plugin", // Siempre al final
     ],
   };
 };
