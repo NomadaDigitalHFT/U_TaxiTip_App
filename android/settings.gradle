@@ -1,0 +1,14 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+    }
+}
+
+rootProject.name = "app_usuario"
+
+include ':app'
+
+def reactNativeDir = file('../node_modules/react-native')
+includeBuild(reactNativeDir)

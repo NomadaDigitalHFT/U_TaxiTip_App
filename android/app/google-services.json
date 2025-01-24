@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "580531003104",
+    "project_id": "taxitipweb",
+    "storage_bucket": "taxitipweb.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:580531003104:android:4a596f44dc5899b692ba85",
+        "android_client_info": {
+          "package_name": "com.company.app_usuario"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAT5jBxn-acpCsemVoTSPzf18pNVuaGZ4s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
