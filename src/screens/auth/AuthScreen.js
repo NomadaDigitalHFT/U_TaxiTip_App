@@ -210,4 +210,3 @@ const Button = styled.Button``;
 const SwitchButton = styled.Button``;
 
 export default AuthScreen;
-
