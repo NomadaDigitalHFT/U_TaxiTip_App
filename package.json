@@ -24,6 +24,7 @@
   "dependencies": {
     "@expo/metro-runtime": "~4.0.0",
     "@hookform/resolvers": "^3.10.0",
+    "@lottiefiles/dotlottie-react": "^0.6.5",
     "@react-native-async-storage/async-storage": "1.23.1",
     "@react-navigation/bottom-tabs": "^7.2.0",
     "@react-navigation/core": "^7.3.1",
@@ -36,6 +37,7 @@
     "expo-status-bar": "~2.0.1",
     "expo-system-ui": "^4.0.7",
     "firebase": "^11.2.0",
+    "lottie-react-native": "7.1.0",
     "nanoid": "^5.0.9",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

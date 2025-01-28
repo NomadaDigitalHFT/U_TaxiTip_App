@@ -1,25 +1,61 @@
-import React from "react";
-import { View, Text, StyleSheet, Button } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import React, { useState } from "react";
+import { View, StyleSheet } from "react-native";
+import UserMapView from "./../../components/user/UserMapView";
+import UserCard from "./../../components/user/UserCard";
 
-const ConfirmationScreen = () => {
-  const navigation = useNavigation();
+const ConfirmationScreen = ({ navigation }) => {
+  const [tripDetails, setTripDetails] = useState({
+    ticketNumber: "00125",
+    name: "Carlos",
+    license: "1254",
+    phone: "+34 123 456 789",
+    distance: "5",
+    price: "10",
+  });
 
-  const handleProceed = () => {
-    // Aquí verificamos si GeoLocation está disponible
-    navigation.navigate("GeoLocation");
+  const [userLocation] = useState({
+    latitude: 37.7749,
+    longitude: -122.4194,
+  });
+
+  const [driverLocation, setDriverLocation] = useState({
+    latitude: 37.7849,
+    longitude: -122.4294,
+  });
+
+  const handleCancel = () => {
+    // Lógica para cancelar el viaje
+    console.log("Viaje cancelado");
+    navigation.goBack();
+  };
+
+  const handleSearch = () => {
+    // Lógica para buscar un taxi nuevamente
+    console.log("Buscando taxi...");
+    setDriverLocation({
+      latitude: 37.7899,
+      longitude: -122.4394,
+    });
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Confirmación del Servicio</Text>
-      <Text style={styles.subtitle}>
-        Tu servicio ha sido confirmado exitosamente.
-      </Text>
-      <Text style={styles.details}>
-        Tu conductor llegará en breve. Por favor, espera mientras lo buscamos.
-      </Text>
-      <Button title="Continuar" onPress={handleProceed} />
+      {/* 3/4 del mapa */}
+      <View style={styles.mapContainer}>
+        <UserMapView
+          userLocation={userLocation}
+          driverLocation={driverLocation}
+          route={[
+            { latitude: userLocation.latitude, longitude: userLocation.longitude },
+            { latitude: driverLocation.latitude, longitude: driverLocation.longitude },
+          ]}
+        />
+      </View>
+
+      {/* 1/4 para los detalles */}
+      <View style={styles.cardContainer}>
+        <UserCard tripDetails={tripDetails} onCancel={handleCancel} onSearch={handleSearch} />
+      </View>
     </View>
   );
 };
@@ -27,28 +63,17 @@ const ConfirmationScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
-    backgroundColor: "#f9f9f9",
   },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 10,
-    textAlign: "center",
+  mapContainer: {
+    flex: 3,
   },
-  subtitle: {
-    fontSize: 16,
-    color: "#555",
-    marginBottom: 20,
-    textAlign: "center",
-  },
-  details: {
-    fontSize: 14,
-    color: "#777",
-    marginBottom: 40,
-    textAlign: "center",
+  cardContainer: {
+    flex: 1,
+    backgroundColor: "#fff",
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    overflow: "hidden",
+    elevation: 10,
   },
 });
 

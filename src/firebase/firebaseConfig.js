@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { initializeAuth, getReactNativePersistence } from "firebase/auth";
+import { initializeAuth, getAuth, getReactNativePersistence } from "firebase/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getFirestore } from "firebase/firestore";
 import {
@@ -23,31 +23,24 @@ const firebaseConfig = {
   measurementId: MEASUREMENT_ID,
 };
 
-// Verifica si ya hay una app inicializada
+// Inicializar Firebase de forma segura
 let app;
 if (!global.firebaseApp) {
+  console.log("🔵 Inicializando Firebase App...");
   app = initializeApp(firebaseConfig);
-  global.firebaseApp = app; // Guarda la app globalmente para evitar inicializaciones múltiples
+  global.firebaseApp = app;
 } else {
+  console.log("⚠️ Firebase App ya estaba inicializada.");
   app = global.firebaseApp;
 }
 
-// Configura la persistencia con AsyncStorage
-let auth;
-try {
-  auth = initializeAuth(app, {
-    persistence: getReactNativePersistence(AsyncStorage),
-  });
-} catch (error) {
-  console.warn("Firebase Auth ya está inicializado:", error.message);
-  auth = global.firebaseAuth || null;
-}
+// Configurar Firebase Auth con persistencia en AsyncStorage
+const auth = global.firebaseAuth || initializeAuth(app, {
+  persistence: getReactNativePersistence(AsyncStorage),
+});
+global.firebaseAuth = auth;
 
-if (!global.firebaseAuth) {
-  global.firebaseAuth = auth;
-}
-
-// Inicializa Firestore
+// Inicializar Firestore
 const db = getFirestore(app);
 
 export { app, auth, db };
