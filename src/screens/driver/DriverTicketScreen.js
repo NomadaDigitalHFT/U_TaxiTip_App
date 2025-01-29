@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
-import DriverFooter from './../../components/common/DriverFooter';
+import Footer from './../../components/common/Footer';
 
 const DriverTicketScreen = ({ route }) => {
   const { ticket } = route.params;
@@ -59,7 +59,7 @@ const DriverTicketScreen = ({ route }) => {
           </TouchableOpacity>
         </View>
       </View>
-      <DriverFooter />
+      <Footer />
     </View>
   );
 };

@@ -1,6 +1,8 @@
 import React from "react";
 import { View, Text, StyleSheet, Button } from "react-native";
 import MapView, { Polyline, Marker } from "react-native-maps";
+import { Use } from "react-native-svg";
+import UserFooter from "../../components/common/UserFooter";
 
 const DriverTripdescriptionScreen = ({ route, navigation }) => {
   const { trip } = route.params || {};
@@ -48,6 +50,7 @@ const DriverTripdescriptionScreen = ({ route, navigation }) => {
         />
       </MapView>
       <Button title="Finalizar Viaje" onPress={handleFinishTrip} />
+      
     </View>
   );
 };
@@ -73,7 +76,9 @@ const styles = StyleSheet.create({
     height: 300,
     marginBottom: 20,
   },
+ 
 });
+
 
 export default DriverTripdescriptionScreen;
 

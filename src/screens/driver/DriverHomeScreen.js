@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text } from 'react-native';
 import styled from 'styled-components/native';
 import GalleryCards from './../../components/screens/GalleryCards';
-import DriverFooter from './../../components/common/DriverFooter';
+import Footer from './../../components/common/Footer';
 
 const Container = styled.View`
   flex: 1;
@@ -59,7 +59,7 @@ const DriverHomeScreen = ({ navigation }) => {
         </Text>
       )}
 
-      <DriverFooter />
+      <Footer />
     </Container>
   );
 };

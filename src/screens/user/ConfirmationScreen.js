@@ -1,61 +1,16 @@
-import React, { useState } from "react";
-import { View, StyleSheet } from "react-native";
-import UserMapView from "./../../components/user/UserMapView";
-import UserCard from "./../../components/user/UserCard";
+import React from "react";
+import { View, Text, StyleSheet } from "react-native";
+import ButtonCancelCards from "./../../elements/buttonCancelCards";
 
-const ConfirmationScreen = ({ navigation }) => {
-  const [tripDetails, setTripDetails] = useState({
-    ticketNumber: "00125",
-    name: "Carlos",
-    license: "1254",
-    phone: "+34 123 456 789",
-    distance: "5",
-    price: "10",
-  });
-
-  const [userLocation] = useState({
-    latitude: 37.7749,
-    longitude: -122.4194,
-  });
-
-  const [driverLocation, setDriverLocation] = useState({
-    latitude: 37.7849,
-    longitude: -122.4294,
-  });
-
-  const handleCancel = () => {
-    // Lógica para cancelar el viaje
-    console.log("Viaje cancelado");
-    navigation.goBack();
-  };
-
-  const handleSearch = () => {
-    // Lógica para buscar un taxi nuevamente
-    console.log("Buscando taxi...");
-    setDriverLocation({
-      latitude: 37.7899,
-      longitude: -122.4394,
-    });
-  };
+const ConfirmationScreen = ({ route, navigation }) => {
+  const { userName, userAddress } = route.params;
 
   return (
     <View style={styles.container}>
-      {/* 3/4 del mapa */}
-      <View style={styles.mapContainer}>
-        <UserMapView
-          userLocation={userLocation}
-          driverLocation={driverLocation}
-          route={[
-            { latitude: userLocation.latitude, longitude: userLocation.longitude },
-            { latitude: driverLocation.latitude, longitude: driverLocation.longitude },
-          ]}
-        />
-      </View>
-
-      {/* 1/4 para los detalles */}
-      <View style={styles.cardContainer}>
-        <UserCard tripDetails={tripDetails} onCancel={handleCancel} onSearch={handleSearch} />
-      </View>
+      <Text style={styles.title}>¡Genial, {userName}!</Text>
+      <Text style={styles.subtitle}>Estamos buscando un taxi para ti en:</Text>
+      <Text style={styles.address}>{userAddress}</Text>
+      <ButtonCancelCards />
     </View>
   );
 };
@@ -63,18 +18,51 @@ const ConfirmationScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
-  mapContainer: {
-    flex: 3,
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
   },
-  cardContainer: {
-    flex: 1,
-    backgroundColor: "#fff",
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    overflow: "hidden",
-    elevation: 10,
+  subtitle: {
+    fontSize: 18,
+    marginTop: 10,
+  },
+  address: {
+    fontSize: 16,
+    marginTop: 5,
+    fontStyle: "italic",
   },
 });
 
 export default ConfirmationScreen;
+
+
+
+
+/*
+
+Primero tenemos que hacer que el boton de cofirmar Ubicación funcione y guarde la información
+en Firestore database en la coleccion llamada userCars y el documento con el id del usuario.
+
+id: U6cXAw1NEVSF6vwoKMOrjyM7qTu1
+createdAt
+"2025-01-29T14:25:37.270Z"
+(cadena)
+name
+"user05"
+phone
+"658996587"
+mas la geolocalizacion que que recogimos en GeoLocationScreen.js  todo esto compone una cards. se entiende? 
+
+En este punto venimos desde GeoLocationscreen y y jemos reunido la informacion deu Usuario asi que le mostraremos en pantalla un ¡Genial ${nombre}! vamos a buscar tu Taxi mas cercano.
+debajo pordemos colocar su direccion de recojida y debajo un boton de Buscar Taxi. .. esto nos servira en un siguiente paso para buscar un taxi cercano y crear la cards en el GalleryCard.js que verá el conductor.
+
+
+
+
+
+
+
+*/

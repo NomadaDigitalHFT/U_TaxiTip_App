@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Alert } from 'react-native';
+import React, { useEffect, useState } from "react";
 import styled from 'styled-components/native';
 import { useNavigation } from '@react-navigation/native';
+import { getAuth } from "firebase/auth";
+import { getFirestore, doc, getDoc } from "firebase/firestore";
 import UserFooter from './../../components/common/UserFooter';
 
 const Container = styled.View`
@@ -35,21 +36,36 @@ const SearchButtonText = styled.Text`
 
 const UserHomeScreen = () => {
   const [searching, setSearching] = useState(false);
+  const [userName, setUserName] = useState("Usuario");
   const navigation = useNavigation();
 
+  useEffect(() => {
+    const fetchUserName = async () => {
+      const auth = getAuth();
+      const db = getFirestore();
+      const user = auth.currentUser;
+
+      if (user) {
+        const userRef = doc(db, "usuarios", user.uid);
+        const userSnap = await getDoc(userRef);
+        
+        if (userSnap.exists()) {
+          setUserName(userSnap.data().name || "Usuario");
+        }
+      }
+    };
+
+    fetchUserName();
+  }, []);
+
   const searchTaxi = () => {
-    setSearching(true);
-    setTimeout(() => {
-      setSearching(false);
-      Alert.alert('Taxi Encontrado', 'Tu taxi está en camino. ¡Prepárate!');
-      navigation.navigate('ConfirmationScreen');
-    }, 3000);
-  };
+    navigation.navigate('UserGeoLocationScreen'); // Ahora lleva a la pantalla de geolocalización
+  };  
 
   return (
     <Container>
       {/* Main Content */}
-      <WelcomeText>¡Hola, Juan!</WelcomeText>
+      <WelcomeText>¡Hola, {userName}!</WelcomeText>
       <ActionText>¿Necesitas un taxi?</ActionText>
       {searching ? (
         <ActionText>Buscando tu taxi...</ActionText>
@@ -66,3 +82,4 @@ const UserHomeScreen = () => {
 };
 
 export default UserHomeScreen;
+
