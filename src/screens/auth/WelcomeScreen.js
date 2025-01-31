@@ -14,9 +14,9 @@ const WelcomeScreen = ({ navigation }) => {
         <TouchableOpacity style={styles.button} onPress={() => handleNavigation("usuario")}>
           <Text style={styles.buttonText}>Usuario</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => handleNavigation("conductor")}>
+        {/* <TouchableOpacity style={styles.button} onPress={() => handleNavigation("conductor")}>
           <Text style={styles.buttonText}>Conductor</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
     </View>
   );

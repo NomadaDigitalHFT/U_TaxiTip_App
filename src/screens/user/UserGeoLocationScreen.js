@@ -68,7 +68,7 @@ const UserGeoLocationScreen = () => {
 
   return (
     <Container>
-      <Title>Confirma tu dirección de recogida</Title>
+      <Title>Confirma tu dirección. Hola </Title>
       {location ? (
         <MapContainer>
           <MapView style={{ flex: 1 }} initialRegion={{

@@ -8,7 +8,7 @@ const ConfirmationScreen = ({ route, navigation }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>¡Genial, {userName}!</Text>
-      <Text style={styles.subtitle}>Estamos buscando un taxi para ti en:</Text>
+      <Text style={styles.subtitle}>Estas UserConfirmationScreen:</Text>
       <Text style={styles.address}>{userAddress}</Text>
       <ButtonCancelCards />
     </View>

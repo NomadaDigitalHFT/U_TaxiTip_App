@@ -25,6 +25,7 @@ function RootStack() {
 
       {/* Flujo del conductor */}
       <Stack.Screen name="DriverNavigator" component={DriverNavigator} />
+      
     </Stack.Navigator>
   );
 }

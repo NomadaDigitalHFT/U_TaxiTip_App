@@ -1,3 +1,4 @@
+// buttonBuildCards.js - Corrigiendo la navegación a UserConfirmationScreen.js
 import React from "react";
 import { Button, Alert } from "react-native";
 import { getAuth } from "firebase/auth";
@@ -11,24 +12,24 @@ const ButtonBuildCards = ({ address, location }) => {
 
   const saveUserCard = async () => {
     const user = auth.currentUser;
-
+  
     if (!user) {
       Alert.alert("Error", "Usuario no autenticado. Intenta iniciar sesión nuevamente.");
       return;
     }
-
+  
     if (!location || !location.coords) {
       Alert.alert("Error", "Ubicación no disponible.");
       return;
     }
-
+  
     try {
-      // Documento con UID del usuario
       const userDocRef = doc(db, "userCards", user.uid);
-
+  
       const newCard = {
+        userId: user.uid,
         id: user.uid,
-        number: `N°${String(Date.now()).slice(-5)}`, // Genera un número basado en timestamp
+        number: `N°${String(Date.now()).slice(-5)}`,
         name: user.displayName || "Usuario",
         phone: user.phoneNumber || "",
         createdAt: new Date().toISOString(),
@@ -38,19 +39,20 @@ const ButtonBuildCards = ({ address, location }) => {
           address: address,
         },
       };
-
-      // Guardar los datos en Firestore
+  
       await setDoc(userDocRef, newCard, { merge: true });
-
+  
       Alert.alert("Ubicación guardada", "Tu dirección ha sido guardada en userCards.");
-      navigation.navigate("ConfirmationScreen", { userName: newCard.name, userAddress: address });
-
+      
+      console.log("Navegando a UserConfirmationScreen con datos:", newCard);
+      navigation.navigate("UserConfirmationScreen", { userName: newCard.name, userAddress: address });
+  
     } catch (error) {
       console.error("Error guardando la tarjeta:", error);
-      Alert.alert("Error", "No se pudo guardar la tarjeta.");
+      Alert.alert("Error", "No se pudo guardar la tarjeta. Verifica tu conexión y permisos.");
     }
   };
-
+  
   return <Button title="Confirmar ubicación" onPress={saveUserCard} />;
 };
 
