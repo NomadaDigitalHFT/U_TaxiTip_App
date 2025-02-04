@@ -3,8 +3,9 @@ import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import UserHomeScreen from "./../screens/user/UserHomeScreen";
 import UserGeoLocationScreen from "./../screens/user/UserGeoLocationScreen";
-import UserTripProgressScreen from "../screens/user/UserTripProgressScreen";
 import UserConfirmationScreen from "./../screens/user/UserConfirmationScreen";
+import UserTripProgressScreen from "./../screens/user/UserTripProgressScreen";
+
 
 // import ReviewScreen from "../screens/user/ReviewScreen";
 // import UserProfileScreen from "../screens/user/UserProfileScreen";
@@ -16,8 +17,8 @@ const UserNavigator = () => (
     {/* Pantallas del flujo del usuario */}
     <Stack.Screen name="UserHomeScreen" component={UserHomeScreen} />
     <Stack.Screen name="UserGeoLocationScreen" component={UserGeoLocationScreen} />
-    <Stack.Screen name="UserTripProgressScreen" component={UserTripProgressScreen} />
     <Stack.Screen name="UserConfirmationScreen" component={UserConfirmationScreen} />
+    <Stack.Screen name="UserTripProgressScreen" component={UserTripProgressScreen} />
     
     {/* 
     <Stack.Screen name="ReviewScreen" component={ReviewScreen} />

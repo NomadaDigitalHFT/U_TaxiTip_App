@@ -1,63 +1,73 @@
-// UserTripProgressScreen.js - Manejo de confirmación, rechazo y cancelación automática
 import React, { useEffect, useState } from "react";
-import { View, Text, Button, Alert, StyleSheet } from "react-native";
-import { getFirestore, doc, updateDoc, deleteDoc } from "firebase/firestore";
+import { View, Text, Button, Alert, StyleSheet, Linking } from "react-native";
+import { getFirestore, doc, onSnapshot, updateDoc } from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
+import ButtonCancelCards from "./../../elements/buttonCancelCards"; // Integración del botón
 
 const UserTripProgressScreen = ({ route }) => {
-  const { requestId, userName, userAddress, tip, distance, eta } = route.params;
+  const { requestId } = route.params;
   const db = getFirestore();
   const navigation = useNavigation();
-  const [timeLeft, setTimeLeft] = useState(60);
+  const [tripData, setTripData] = useState(null);
+  const [calculatedFare, setCalculatedFare] = useState(null);
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => prev - 1);
-    }, 1000);
+    const requestRef = doc(db, "userCards", requestId);
 
-    const autoCancel = setTimeout(() => {
-      cancelTrip();
-    }, 60000);
+    const unsubscribe = onSnapshot(requestRef, (docSnap) => {
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        setTripData(data);
 
-    return () => {
-      clearInterval(timer);
-      clearTimeout(autoCancel);
-    };
+        // Cálculo de la tarifa: (Distancia del conductor hasta el usuario * 1.5€) + 2€
+        if (data.driverDistance) {
+          const fare = data.driverDistance * 1.5 + 2;
+          setCalculatedFare(fare.toFixed(2));
+        }
+      } else {
+        Alert.alert("Error", "La solicitud ha sido cancelada.");
+        navigation.navigate("UserHomeScreen");
+      }
+    });
+
+    return () => unsubscribe();
   }, []);
 
-  const acceptTrip = async () => {
+  const confirmFare = async () => {
     try {
-      await updateDoc(doc(db, "requests", requestId), { status: "confirmed" });
-      Alert.alert("Viaje confirmado", "Tu conductor está en camino.");
-      navigation.navigate("TripTrackingScreen");
+      await updateDoc(doc(db, "userCards", requestId), { status: "fare_confirmed" });
+      Alert.alert("Tarifa confirmada", "Tu conductor está en camino.");
     } catch (error) {
-      console.error("Error confirmando viaje:", error);
-      Alert.alert("Error", "No se pudo confirmar el viaje.");
+      console.error("Error confirmando tarifa:", error);
+      Alert.alert("Error", "No se pudo confirmar la tarifa.");
     }
   };
 
-  const cancelTrip = async () => {
-    try {
-      await deleteDoc(doc(db, "requests", requestId));
-      Alert.alert("Viaje cancelado", "La solicitud ha sido eliminada.");
-      navigation.navigate("HomeScreen");
-    } catch (error) {
-      console.error("Error cancelando viaje:", error);
-      Alert.alert("Error", "No se pudo cancelar el viaje.");
+  const callDriver = () => {
+    if (tripData?.driverPhone) {
+      Linking.openURL(`tel:${tripData.driverPhone}`);
+    } else {
+      Alert.alert("Error", "No se encontró el número del conductor.");
     }
   };
+
+  if (!tripData) {
+    return <Text>Cargando datos del viaje...</Text>;
+  }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>¡Hola, {userName}!</Text>
-      <Text style={styles.subtitle}>Tu taxi está en camino a:</Text>
-      <Text style={styles.address}>{userAddress}</Text>
-      <Text style={styles.info}>💰 Propina: {tip ? `${tip}€` : "No especificada"}</Text>
-      <Text style={styles.info}>📏 Distancia: {distance ? `${distance} km` : "N/A"}</Text>
-      <Text style={styles.info}>⏳ Tiempo estimado: {eta ? `${eta} min` : "N/A"}</Text>
-      <Text style={styles.timer}>Tiempo restante: {timeLeft} segundos</Text>
-      <Button title="Aceptar" onPress={acceptTrip} />
-      <Button title="Rechazar" onPress={cancelTrip} color="red" />
+      <Text style={styles.title}>¡Tu viaje está en marcha!</Text>
+      <Text style={styles.subtitle}>Detalles del viaje:</Text>
+      <Text style={styles.info}>🚖 Conductor: {tripData.driverName || "Desconocido"}</Text>
+      <Text style={styles.info}>📞 Teléfono: {tripData.driverPhone || "No disponible"}</Text>
+      <Text style={styles.info}>🚗 Vehículo: {tripData.carModel || "No especificado"} - {tripData.carPlate || "Sin placa"}</Text>
+      <Text style={styles.info}>📏 Distancia del conductor: {tripData.driverDistance || "N/A"} km</Text>
+      <Text style={styles.info}>⏳ Tiempo estimado: {tripData.eta || "N/A"} min</Text>
+      <Text style={styles.fare}>💰 Tarifa estimada: {calculatedFare ? `${calculatedFare}€` : "Calculando..."}</Text>
+      <Button title="Confirmar Tarifa" onPress={confirmFare} />
+      <Button title="Llamar al Conductor" onPress={callDriver} color="green" />
+      <ButtonCancelCards /> {/* Integración del botón para cancelar */}
     </View>
   );
 };
@@ -66,9 +76,8 @@ const styles = StyleSheet.create({
   container: { flex: 1, justifyContent: "center", alignItems: "center" },
   title: { fontSize: 24, fontWeight: "bold" },
   subtitle: { fontSize: 18, marginTop: 10 },
-  address: { fontSize: 16, marginTop: 5, fontStyle: "italic" },
   info: { fontSize: 16, marginTop: 5 },
-  timer: { fontSize: 18, color: "red", marginTop: 20 },
+  fare: { fontSize: 18, fontWeight: "bold", marginTop: 10 },
 });
 
 export default UserTripProgressScreen;

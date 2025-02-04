@@ -45,7 +45,12 @@ const ButtonBuildCards = ({ address, location }) => {
       Alert.alert("Ubicación guardada", "Tu dirección ha sido guardada en userCards.");
       
       console.log("Navegando a UserConfirmationScreen con datos:", newCard);
-      navigation.navigate("UserConfirmationScreen", { userName: newCard.name, userAddress: address });
+
+      navigation.navigate("UserConfirmationScreen", {
+        userCardsId: newCard.id, // 🔹 Corregimos el ID de la tarjeta
+        userName: newCard.name,
+        userAddress: address
+      });
   
     } catch (error) {
       console.error("Error guardando la tarjeta:", error);

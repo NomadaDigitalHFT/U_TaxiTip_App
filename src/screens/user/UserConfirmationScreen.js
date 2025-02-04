@@ -1,15 +1,74 @@
-import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import React, { useEffect, useState } from "react";
+import { View, Text, StyleSheet, Alert, ActivityIndicator } from "react-native";
+import { getFirestore, doc, onSnapshot, getDoc } from "firebase/firestore";
+import { useNavigation } from "@react-navigation/native";
 import ButtonCancelCards from "./../../elements/buttonCancelCards";
 
-const ConfirmationScreen = ({ route, navigation }) => {
-  const { userName, userAddress } = route.params;
+const UserConfirmationScreen = ({ route }) => {
+  const { userCardsId } = route.params || {}; // ✅ Asegurar que no sea undefined
+  const db = getFirestore();
+  const navigation = useNavigation();
+  const [tripData, setTripData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  console.log("🔍 userCardsId recibido en UserConfirmationScreen:", userCardsId);
+
+  useEffect(() => {
+    if (!userCardsId) {
+      console.error("❌ Error: userCardsId es undefined.");
+      Alert.alert("Error", "No se encontró la solicitud.");
+      navigation.goBack();
+      return;
+    }
+
+    const requestRef = doc(db, "userCards", userCardsId);
+
+    const fetchData = async () => {
+      const requestSnap = await getDoc(requestRef);
+      if (!requestSnap.exists()) {
+        console.error("❌ Error: El documento userCardsId no existe en Firestore.");
+        Alert.alert("Error", "La solicitud no existe en la base de datos.");
+        navigation.goBack();
+        return;
+      }
+    };
+
+    fetchData();
+
+    const unsubscribe = onSnapshot(requestRef, (docSnap) => {
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        setTripData(data);
+
+        if (data.status === "waiting_user_confirmation") {
+          Alert.alert("🚕 Un conductor ha aceptado tu viaje. UserConfirmationScreen.js");
+        }
+
+        if (data.status === "fare_confirmed") {
+          console.log("✅ Tarifa confirmada, redirigiendo a UserTripProgressScreen...");
+          navigation.navigate("UserTripProgressScreen", { userCardsId });
+        }
+      } else {
+        Alert.alert("❌ Error", "La solicitud fue cancelada.");
+        navigation.goBack();
+      }
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, [userCardsId]);
+
+  if (loading) {
+    return <ActivityIndicator size="large" color="#007bff" />;
+  }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>¡Genial, {userName}!</Text>
-      <Text style={styles.subtitle}>Estas UserConfirmationScreen:</Text>
-      <Text style={styles.address}>{userAddress}</Text>
+      <Text style={styles.title}>¡Genial, {tripData?.name || "Usuario"}!</Text>
+      <Text style={styles.subtitle}>Esperando confirmación...</Text>
+      <Text style={styles.address}>
+        📍 Dirección: {tripData?.lastLocation?.address || "Ubicación desconocida"}
+      </Text>
       <ButtonCancelCards />
     </View>
   );
@@ -20,6 +79,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    padding: 20,
   },
   title: {
     fontSize: 24,
@@ -36,28 +96,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ConfirmationScreen;
-
-
-
-
-/*
-
-Primero tenemos que hacer que el boton de cofirmar Ubicación funcione y guarde la información
-en Firestore database en la coleccion llamada userCars y el documento con el id del usuario.
-
-id: U6cXAw1NEVSF6vwoKMOrjyM7qTu1
-createdAt
-"2025-01-29T14:25:37.270Z"
-(cadena)
-name
-"user05"
-phone
-"658996587"
-mas la geolocalizacion que que recogimos en GeoLocationScreen.js  todo esto compone una cards. se entiende? 
-
-En este punto venimos desde GeoLocationscreen y y jemos reunido la informacion deu Usuario asi que le mostraremos en pantalla un ¡Genial ${nombre}! vamos a buscar tu Taxi mas cercano.
-debajo pordemos colocar su direccion de recojida y debajo un boton de Buscar Taxi. .. esto nos servira en un siguiente paso para buscar un taxi cercano y crear la cards en el GalleryCard.js que verá el conductor.
+export default UserConfirmationScreen;
 
 
 
@@ -65,4 +104,48 @@ debajo pordemos colocar su direccion de recojida y debajo un boton de Buscar Tax
 
 
 
-*/
+
+
+
+
+
+
+// import React from "react";
+// import { View, Text, StyleSheet } from "react-native";
+// import ButtonCancelCards from "./../../elements/buttonCancelCards";
+
+// const ConfirmationScreen = ({ route, navigation }) => {
+//   const { userName, userAddress } = route.params;
+
+//   return (
+//     <View style={styles.container}>
+//       <Text style={styles.title}>¡Genial, {userName}!</Text>
+//       <Text style={styles.subtitle}>Estas UserConfirmationScreen:</Text>
+//       <Text style={styles.address}>{userAddress}</Text>
+//       <ButtonCancelCards />
+//     </View>
+//   );
+// };
+
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     justifyContent: "center",
+//     alignItems: "center",
+//   },
+//   title: {
+//     fontSize: 24,
+//     fontWeight: "bold",
+//   },
+//   subtitle: {
+//     fontSize: 18,
+//     marginTop: 10,
+//   },
+//   address: {
+//     fontSize: 16,
+//     marginTop: 5,
+//     fontStyle: "italic",
+//   },
+// });
+
+// export default ConfirmationScreen;
