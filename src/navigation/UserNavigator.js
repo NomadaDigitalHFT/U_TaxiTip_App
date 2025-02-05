@@ -5,6 +5,7 @@ import UserHomeScreen from "./../screens/user/UserHomeScreen";
 import UserGeoLocationScreen from "./../screens/user/UserGeoLocationScreen";
 import UserConfirmationScreen from "./../screens/user/UserConfirmationScreen";
 import UserTripProgressScreen from "./../screens/user/UserTripProgressScreen";
+import UserMapViewScreen from "./../screens/user/UserMapViewScreen";
 
 
 // import ReviewScreen from "../screens/user/ReviewScreen";
@@ -19,6 +20,7 @@ const UserNavigator = () => (
     <Stack.Screen name="UserGeoLocationScreen" component={UserGeoLocationScreen} />
     <Stack.Screen name="UserConfirmationScreen" component={UserConfirmationScreen} />
     <Stack.Screen name="UserTripProgressScreen" component={UserTripProgressScreen} />
+    <Stack.Screen name="UserMapViewScreen" component={UserMapViewScreen} />
     
     {/* 
     <Stack.Screen name="ReviewScreen" component={ReviewScreen} />
