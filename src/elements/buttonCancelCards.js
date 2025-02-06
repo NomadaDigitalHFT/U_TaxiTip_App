@@ -1,10 +1,10 @@
 import React from "react";
 import { Button, Alert } from "react-native";
 import { getAuth } from "firebase/auth";
-import { getFirestore, doc, deleteDoc } from "firebase/firestore";
+import { getFirestore, doc, updateDoc } from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
 
-const ButtonCancelCards = () => {
+const ButtonCancelCards = ({ userCardsId }) => {
   const navigation = useNavigation();
   const auth = getAuth();
   const db = getFirestore();
@@ -18,8 +18,8 @@ const ButtonCancelCards = () => {
     }
 
     try {
-      const userDocRef = doc(db, "userCards", user.uid);
-      await deleteDoc(userDocRef);
+      const userDocRef = doc(db, "userCards", userCardsId);
+      await updateDoc(userDocRef, { status: "cancelled" });
 
       Alert.alert("Cancelado", "Tu solicitud ha sido cancelada.");
       navigation.reset({
@@ -37,3 +37,4 @@ const ButtonCancelCards = () => {
 };
 
 export default ButtonCancelCards;
+

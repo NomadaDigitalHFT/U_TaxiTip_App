@@ -29,7 +29,7 @@ const UserMapViewScreen = ({ route }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>🗺️ Mapa de Viaje</Text>
+      <Text style={styles.title}>🗺️ UserMapViewScreen</Text>
       <Text>📍 Origen (Usuario): {tripData?.lastLocation?.address || "N/A"}</Text>
       <Text>🎯 Destino (Conductor): {tripData?.driverLocation?.latitude}, {tripData?.driverLocation?.longitude}</Text>
       <Text>☎️ Teléfono del Conductor: {tripData?.phone || "No disponible"}</Text>
