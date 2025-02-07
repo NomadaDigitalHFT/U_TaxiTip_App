@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
-import theme from "../../styles/theme";
+import theme from "./../../styles/theme";
 import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 import { TextInput } from "react-native";
-import ButtonBuildCards from "./../../elements/buttonBuildCards"; // Importamos el nuevo componente
-
+import ButtonBuildCards from "./../../elements/Buttons/buttonBuildCards";
 const Container = styled.View`
   flex: 1;
   justify-content: center;

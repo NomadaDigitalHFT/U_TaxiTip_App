@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, Button, Alert, ActivityIndicator } from "react-native";
 import { getFirestore, doc, onSnapshot, updateDoc } from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
-import ButtonCancelCards from "./../../elements/buttonCancelCards";
+import ButtonCancelCards from "./../../elements/Buttons/buttonCancelCards";
 
 const UserTripProgressScreen = ({ route }) => {
   const { userCardsId } = route.params || {};
@@ -17,20 +17,30 @@ const UserTripProgressScreen = ({ route }) => {
       navigation.goBack();
       return;
     }
-
+  
     const requestRef = doc(db, "userCards", userCardsId);
     const unsubscribe = onSnapshot(requestRef, (docSnap) => {
       if (docSnap.exists()) {
-        setTripData(docSnap.data());
+        const data = docSnap.data();
+        setTripData(data);
+        console.log("📡 Datos recibidos en UserTripProgressScreen:", data);
+  
+        // 🔹 Si el status cambia a "completed", terminar el seguimiento del viaje
+        if (data.status === "completed") {
+          console.log("✅ Viaje finalizado. Redirigiendo...");
+          unsubscribe();
+          navigation.reset({ index: 0, routes: [{ name: "UserHomeScreen" }] });
+        }
       } else {
         Alert.alert("Error", "No se encontró la solicitud en Firestore.");
         navigation.goBack();
       }
       setLoading(false);
     });
-
+  
     return () => unsubscribe();
   }, [userCardsId]);
+  
 
   const confirmarTarifa = async () => {
     if (!tripData) {
@@ -65,7 +75,9 @@ const UserTripProgressScreen = ({ route }) => {
       <Text>🚖 Ubicación del Conductor en Tiempo Real: {tripData?.driverLocation?.latitude}, {tripData?.driverLocation?.longitude}</Text>
 
       <Button title="ACEPTAR TARIFA" color="green" onPress={confirmarTarifa} />
-      <ButtonCancelCards />
+
+      {/* 🔹 Ahora pasamos el userCardsId correctamente al botón de cancelar */}
+      <ButtonCancelCards userCardsId={userCardsId} />
     </View>
   );
 };
@@ -76,6 +88,7 @@ const styles = StyleSheet.create({
 });
 
 export default UserTripProgressScreen;
+
 
 
 

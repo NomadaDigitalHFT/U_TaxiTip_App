@@ -1,58 +1,65 @@
 import React, { useState } from "react";
 import styled from "styled-components/native";
-import { Alert, ActivityIndicator } from "react-native";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { ActivityIndicator } from "react-native";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 import { setDoc, doc } from "firebase/firestore";
 import { auth, db } from "./../../firebase/firebaseConfig";
+import Alertas from "./../../elements/Alertas/Alertas"; // Importamos el componente de alertas
 
-const AuthScreen = ({ navigation, route }) => {
-  const { role } = route.params; // "usuario" o "conductor"
+const AuthScreen = ({ navigation }) => {
   const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({
     name: "",
     lastName: "",
     phone: "",
-    dni: "",
-    taxiId: "",
-    license: "",
     email: "",
     password: "",
     confirmPassword: "",
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertType, setAlertType] = useState("success");
+  const [alertVisible, setAlertVisible] = useState(false);
+
+  // Función para mostrar alertas con mensaje dinámico
+  const showAlert = (message, type = "success") => {
+    setAlertMessage(message);
+    setAlertType(type);
+    setAlertVisible(true);
+  };
+
+  // Función para cerrar la alerta manualmente
+  const closeAlert = () => {
+    setAlertVisible(false);
+  };
 
   const handleInputChange = (field, value) => {
     setFormData({ ...formData, [field]: value });
   };
 
   const validateInputs = () => {
-    const { email, password, confirmPassword, name, phone } = formData;
+    const { email, password, confirmPassword, name, lastName, phone } = formData;
 
     if (!email || !password) {
-      Alert.alert("Error", "Todos los campos son obligatorios.");
+      showAlert("Todos los campos son obligatorios.", "error");
       return false;
     }
 
     if (!isLogin && password.length < 6) {
-      Alert.alert("Error", "La contraseña debe tener al menos 6 caracteres.");
+      showAlert("La contraseña debe tener al menos 6 caracteres.", "error");
       return false;
     }
 
     if (!isLogin && password !== confirmPassword) {
-      Alert.alert("Error", "Las contraseñas no coinciden.");
+      showAlert("Las contraseñas no coinciden.", "error");
       return false;
     }
 
-    if (!isLogin && role === "conductor") {
-      const { dni, taxiId, license } = formData;
-      if (!name || !phone || !dni || !taxiId || !license) {
-        Alert.alert("Error", "Todos los campos de conductor son obligatorios.");
-        return false;
-      }
-    }
-
-    if (!isLogin && role === "usuario" && (!name || !phone)) {
-      Alert.alert("Error", "Todos los campos de usuario son obligatorios.");
+    if (!isLogin && (!name || !lastName || !phone)) {
+      showAlert("Todos los campos de usuario son obligatorios.", "error");
       return false;
     }
 
@@ -68,27 +75,35 @@ const AuthScreen = ({ navigation, route }) => {
     try {
       if (isLogin) {
         // Lógica para iniciar sesión
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        Alert.alert("Inicio de Sesión", "Has iniciado sesión correctamente.");
-        navigation.navigate(role === "usuario" ? "UserNavigator" : "DriverNavigator");
+        const userCredential = await signInWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
+        showAlert("Has iniciado sesión correctamente.", "success");
+        navigation.navigate("UserNavigator");
       } else {
         // Lógica para registro
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const userCredential = await createUserWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
 
         // Guardar datos adicionales en Firestore
-        await setDoc(doc(db, role === "usuario" ? "usuarios" : "conductores", userCredential.user.uid), {
+        await setDoc(doc(db, "usuarios", userCredential.user.uid), {
           ...profileData,
-          role,
           email,
           createdAt: new Date().toISOString(),
         });
 
-        Alert.alert("Registro Exitoso", "Tu cuenta ha sido creada.");
-        navigation.navigate(role === "usuario" ? "UserNavigator" : "DriverNavigator");
+        showAlert("Tu cuenta ha sido creada con éxito.", "success");
+        navigation.navigate("UserNavigator");
       }
     } catch (error) {
-      console.error("Error durante el registro/inicio de sesión:", error);
+      console.error("Error en autenticación:", error);
       let errorMessage = "Ocurrió un error inesperado.";
+
       if (error.code === "auth/email-already-in-use") {
         errorMessage = "Este correo ya está registrado.";
       } else if (error.code === "auth/weak-password") {
@@ -100,7 +115,8 @@ const AuthScreen = ({ navigation, route }) => {
       } else if (error.code === "auth/wrong-password") {
         errorMessage = "La contraseña es incorrecta.";
       }
-      Alert.alert("Error", errorMessage);
+
+      showAlert(errorMessage, "error");
     } finally {
       setIsLoading(false);
     }
@@ -108,7 +124,15 @@ const AuthScreen = ({ navigation, route }) => {
 
   return (
     <Container>
-      <Title>{isLogin ? "Iniciar Sesión" : `Registro como ${role === "usuario" ? "Usuario" : "Conductor"}`}</Title>
+      {/* Componente de Alertas */}
+      <Alertas
+        message={alertMessage}
+        type={alertType}
+        visible={alertVisible}
+        onClose={closeAlert}
+      />
+
+      <Title>{isLogin ? "Iniciar Sesión" : "Registro como Usuario"}</Title>
 
       {!isLogin && (
         <>
@@ -118,34 +142,15 @@ const AuthScreen = ({ navigation, route }) => {
             onChangeText={(value) => handleInputChange("name", value)}
           />
           <Input
-            placeholder="Teléfono"
-            value={formData.phone}
-            onChangeText={(value) => handleInputChange("phone", value)}
-            keyboardType="phone-pad"
-          />
-        </>
-      )}
-      {role === "conductor" && !isLogin && (
-        <>
-          <Input
-            placeholder="Apellido"
+            placeholder="Apellidos"
             value={formData.lastName}
             onChangeText={(value) => handleInputChange("lastName", value)}
           />
           <Input
-            placeholder="DNI/NIE"
-            value={formData.dni}
-            onChangeText={(value) => handleInputChange("dni", value)}
-          />
-          <Input
-            placeholder="Número de Carnet de Taxista"
-            value={formData.taxiId}
-            onChangeText={(value) => handleInputChange("taxiId", value)}
-          />
-          <Input
-            placeholder="Número de Licencia"
-            value={formData.license}
-            onChangeText={(value) => handleInputChange("license", value)}
+            placeholder="Teléfono"
+            value={formData.phone}
+            keyboardType="phone-pad"
+            onChangeText={(value) => handleInputChange("phone", value)}
           />
         </>
       )}
@@ -174,16 +179,21 @@ const AuthScreen = ({ navigation, route }) => {
       {isLoading ? (
         <ActivityIndicator size="large" color="#0000ff" />
       ) : (
-        <Button title={isLogin ? "Entrar" : "Registrarse"} onPress={handleAuth} />
+        <StyledButton onPress={handleAuth}>
+          <ButtonText>{isLogin ? "Entrar" : "Registrarse"}</ButtonText>
+        </StyledButton>
       )}
-      <SwitchButton
-        title={isLogin ? "¿No tienes cuenta? Regístrate" : "¿Ya tienes cuenta? Inicia sesión"}
-        onPress={() => setIsLogin(!isLogin)}
-      />
+
+      <SwitchButton onPress={() => setIsLogin(!isLogin)}>
+        <SwitchButtonText>
+          {isLogin ? "¿No tienes cuenta? Regístrate" : "¿Ya tienes cuenta? Inicia sesión"}
+        </SwitchButtonText>
+      </SwitchButton>
     </Container>
   );
 };
 
+// Estilos actualizados
 const Container = styled.View`
   flex: 1;
   justify-content: center;
@@ -205,8 +215,31 @@ const Input = styled.TextInput`
   border-radius: 5px;
 `;
 
-const Button = styled.Button``;
+const StyledButton = styled.TouchableOpacity`
+  background-color: #007bff;
+  padding: 15px;
+  border-radius: 8px;
+  align-items: center;
+  margin-top: 10px;
+`;
 
-const SwitchButton = styled.Button``;
+const ButtonText = styled.Text`
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+`;
+
+const SwitchButton = styled.TouchableOpacity`
+  margin-top: 15px;
+`;
+
+const SwitchButtonText = styled.Text`
+  color:rgb(44, 46, 49);
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+  text-decoration: underline;
+`;
 
 export default AuthScreen;
+
