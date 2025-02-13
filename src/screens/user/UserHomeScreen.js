@@ -6,6 +6,7 @@ import { getFirestore, doc, getDoc } from "firebase/firestore";
 import UserFooter from './../../components/common/UserFooter';
 import { ActivityIndicator } from "react-native";
 
+
 const Container = styled.View`
   flex: 1;
   background-color: #ffffff;
@@ -87,6 +88,7 @@ const UserHomeScreen = () => {
 
   return (
     <Container>
+     
       <WelcomeText>¡Hola, {userName}!</WelcomeText>
       <ActionText>¿Necesitas un taxi?</ActionText>
       

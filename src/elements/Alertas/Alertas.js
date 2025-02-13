@@ -29,7 +29,7 @@ const Alertas = ({ message, type = "success", visible = false, onClose }) => {
         translateY.value = withTiming(-200, { duration: 500 });
         opacity.value = withTiming(0, { duration: 500 });
         onClose && onClose();
-      }, 3000);
+      }, 2000);
 
       return () => clearTimeout(timer);
     }

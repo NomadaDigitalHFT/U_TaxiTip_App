@@ -42,8 +42,6 @@ const ButtonBuildCards = ({ address, location }) => {
   
       await setDoc(userDocRef, newCard, { merge: true });
   
-      Alert.alert("Ubicación guardada", "Tu dirección ha sido guardada en userCards.");
-      
       console.log("Navegando a UserConfirmationScreen con datos:", newCard);
 
       navigation.navigate("UserConfirmationScreen", {

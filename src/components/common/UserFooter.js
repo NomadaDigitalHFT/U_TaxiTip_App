@@ -33,7 +33,7 @@ const Footer = () => {
   return (
     <FooterContainer>
       {/* Home Button */}
-      <FooterButton onPress={() => navigation.navigate('UserHome')}>
+      <FooterButton onPress={() => navigation.navigate('UserHomeScreen')}>
         <Ionicons name="home" size={24} color="#007BFF" />
         <FooterText>Home</FooterText>
       </FooterButton>

@@ -1,0 +1,88 @@
+
+**Documentación del Proyecto TaxiTip**
+
+# 1. Introducción
+TaxiTip es una aplicación diseñada para facilitar la movilidad de los usuarios a través de un sistema de taxis, integrando funcionalidades de geolocalización, pago y registro de viajes. La aplicación está dividida en dos interfaces principales: Usuario y Conductor.
+
+# 2. Arquitectura del Proyecto
+El proyecto se basa en **React Native** para la aplicación móvil y utiliza **Firebase** como backend para la gestión de datos en tiempo real, autenticación y notificaciones.
+
+**Estructura del Proyecto:**
+- **Frontend:** React Native, Expo, React Navigation.
+- **Backend:** Firebase (Auth, Firestore, Storage, FCM).
+- **APIs utilizadas:** Google Maps API (Geolocalización y rutas), Firebase Cloud Messaging (Notificaciones push).
+
+---
+
+# 3. Aplicación Usuario
+La aplicación del usuario permite solicitar un servicio de taxi, visualizar el estado del viaje y consultar su historial.
+
+### 3.1. Pantallas Principales
+1. **Pantalla de Inicio:** Permite registrarse o iniciar sesión.
+2. **Pantalla de Geolocalización:** Muestra la ubicación actual y permite ingresar la dirección de destino.
+3. **Confirmación del Servicio:** Muestra detalles del conductor asignado y permite cancelar el servicio si es necesario.
+4. **Recogida y Viaje:** Indica cuando el taxi ha llegado y muestra el progreso del viaje en tiempo real.
+5. **Historial de Viajes:** Lista los viajes realizados con detalles como fecha, tarifa y distancia.
+6. **Perfil:** Permite gestionar información personal y configuraciones del usuario.
+
+### 3.2. Características Clave
+- Mapa interactivo con Google Maps API.
+- Actualización en tiempo real del estado del viaje.
+- Notificaciones push para avisos importantes.
+- Historial de viajes descargable en PDF.
+
+---
+
+# 4. Aplicación Conductor
+La aplicación del conductor permite recibir solicitudes de viaje, gestionar su disponibilidad y visualizar su historial de viajes.
+
+### 4.1. Pantallas Principales
+1. **Pantalla de Inicio:** Permite registrarse como conductor o iniciar sesión.
+2. **Panel Principal:** Muestra solicitudes de viaje disponibles con detalles del usuario y la tarifa estimada.
+3. **Mapa en Tiempo Real:** Indica la ubicación del usuario y la ruta para recogerlo.
+4. **Confirmación de Recogida:** El conductor confirma cuando ha recogido al usuario.
+5. **Viaje en Curso:** Seguimiento del trayecto en tiempo real.
+6. **Finalización del Viaje:** Confirma la llegada, calcula el costo final y registra el ticket.
+7. **Historial de Viajes:** Lista de viajes completados con detalles relevantes.
+
+### 4.2. Características Clave
+- Activación de disponibilidad con un solo botón.
+- Recepción y aceptación de solicitudes en tiempo real.
+- Sincronización con Firebase para estados de viaje.
+- Cálculo automático de tarifas basado en distancia.
+
+---
+
+# 5. Flujo de Trabajo y Navegación
+El flujo de trabajo de TaxiTip está diseñado para optimizar la experiencia del usuario y la eficiencia del conductor:
+
+1. **El usuario ingresa su ubicación y destino.**
+2. **El sistema busca conductores disponibles y asigna uno.**
+3. **El usuario recibe la información del conductor y su ETA.**
+4. **El conductor recoge al usuario y confirma la recogida.**
+5. **El viaje se sigue en tiempo real.**
+6. **Al llegar, se calcula la tarifa y se registra en el historial.**
+
+---
+
+# 6. Base de Datos y Seguridad
+### 6.1. Estructura en Firestore
+- **Usuarios:** Datos personales, historial de viajes.
+- **Conductores:** Datos de registro, disponibilidad, historial de viajes.
+- **Viajes:** Estado, ruta, tarifas.
+
+### 6.2. Seguridad
+- Autenticación con Firebase Auth (Email/Google Login).
+- Validaciones en tiempo real para evitar fraude o mal uso.
+- Encriptación de datos sensibles.
+
+---
+
+# 7. Mejoras Futuras
+- Implementación de pagos dentro de la app.
+- Integración de un chat entre usuario y conductor.
+- Optimización del sistema de notificaciones.
+
+**TaxiTip - Documentación Oficial**
+
+

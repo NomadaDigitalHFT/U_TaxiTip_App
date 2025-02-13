@@ -1,0 +1,369 @@
+Usuario TaxiTip_App
+
+src\
+    assets\icons
+    components\
+        common\
+            Header.js (vacío)
+            InputField.js (vacío)
+            UserFooter.js
+
+                Define el footer de la app con botones para Home, Configuración y una acción central.
+
+                🔹 Cómo funciona:
+
+                Usa styled-components para el diseño.
+                Maneja la navegación con useNavigation().
+                Incluye iconos de Ionicons para cada botón​
+
+        user\
+            UserCard.js
+
+                Muestra detalles del viaje confirmado, incluyendo ticket, conductor, teléfono y tarifa estimada.
+
+                🔹 Cómo funciona:
+
+                Usa tripDetails para mostrar información del viaje.
+                Incluye botones para cancelar o buscar un taxi.
+                Ocupa 1/4 de la pantalla, dejando 3/4 para el mapa​
+
+        contexts\
+            AuthContext.js
+
+                Gestiona la autenticación del usuario en la aplicación.
+
+                🔹 Cómo funciona:
+
+                Usa onAuthStateChanged para detectar cambios en la sesión.
+                Almacena el usuario autenticado en currentUser.
+                Proporciona acceso a la sesión en toda la app con useAuth()
+
+            TripContext.js
+
+                Este archivo maneja el estado global del viaje en la aplicación, obteniendo y actualizando datos en tiempo real desde Firestore.
+
+                🔹 ¿Cómo funciona?
+
+                Al iniciar, obtiene la información del viaje actual desde la base de datos.
+                Se suscribe a cambios en Firestore para actualizar automáticamente los datos del viaje.
+                Proporciona tripData y su estado (loading) a los componentes que lo necesiten.
+                🔹 ¿Para qué se usa?
+
+                Para mostrar en vivo el estado del viaje (ruta, tarifa, distancia).
+                Para sincronizar en tiempo real la ubicación del conductor y el usuario
+
+            UserContext.js
+
+                Maneja el estado global del usuario en la aplicación.
+
+                🔹 Cómo funciona:
+
+                Usa useState para almacenar la información del usuario.
+                Proporciona setUser para actualizar los datos.
+                Permite acceder al usuario desde cualquier componente con 
+
+        elements\
+
+            Alerts\
+
+               Alertas.js 
+
+                Muestra alertas animadas en la app con distintos tipos (éxito, error, advertencia), usando react-native-reanimated y styled-components.
+
+                🔹 Cómo funciona:
+
+                Usa animaciones para mostrar y ocultar la alerta.
+                Cambia el color según el tipo de alerta.
+                Se oculta automáticamente después de 3 segundos o al presionar el botón de cierre​
+
+            Buttons\
+
+                Button.js   
+                
+                Define un botón personalizable con colores, iconos y estados (loading, disabled).
+
+                🔹 Cómo funciona:
+
+                Usa styled-components para estilos dinámicos.
+                Cambia el color según el tipo (success, danger, warning, primary).
+                Muestra un ActivityIndicator si está en estado de carga (loading).
+                Incluye un icono opcional con MaterialIcons​
+
+                buttonAcceptTrip.js 
+
+                buttonBuildCards.js
+
+                Guarda la ubicación del usuario en Firestore y lo redirige a UserConfirmationScreen.
+
+                🔹 Cómo funciona:
+
+                Verifica que el usuario esté autenticado.
+                Obtiene la ubicación actual y la guarda en userCards.
+                Muestra alertas en caso de error.
+                Navega a UserConfirmationScreen con los datos guardados​
+
+                buttonCancelCards.js 
+
+                Botón para cancelar solicitudes de viaje.
+
+                🔹 Cómo funciona:
+
+                Usa useCancelRequest() para manejar la cancelación.
+                Muestra un indicador de carga (ActivityIndicator) mientras procesa.
+                Deshabilita el botón si la solicitud está en curso
+
+            firebase\
+
+                service\
+
+                    auth.js
+
+                    Maneja el registro e inicio de sesión de usuarios con Firebase Auth.
+
+                    🔹 Cómo funciona:
+
+                    Registra usuarios con createUserWithEmailAndPassword().
+                    Guarda datos adicionales en Firestore.
+                    Maneja errores comunes como correo en uso o permisos insuficientes​
+
+                firebaseConfig.js
+
+                Configura e inicializa Firebase en la app.
+
+                🔹 Cómo funciona:
+
+                Usa variables de entorno para mayor seguridad.
+                Inicializa Firebase App, Auth con persistencia y Firestore.
+                Evita múltiples inicializaciones con global.firebaseApp
+
+            hooks\
+
+                useCancelRequest.js
+
+                Cancela solicitudes de viaje eliminándolas de Firestore.
+
+                🔹 Cómo funciona:
+
+                Verifica si el usuario está autenticado.
+                Comprueba si la solicitud existe y si el usuario tiene permiso.
+                Elimina el documento en userCards.
+                Redirige a UserHomeScreen tras cancelar
+
+                useTripProgress.js
+
+                Función del archivo useTripProgress.js
+                Monitorea el estado del viaje en tiempo real desde Firestore.
+
+                🔹 Cómo funciona:
+
+                Obtiene los datos iniciales del viaje.
+                Se suscribe a Firestore para actualizaciones en tiempo real.
+                Redirige al usuario si el viaje finaliza o no existe                
+
+            navigation\
+
+                AuthNavigator.js
+
+                Maneja la navegación para la autenticación de usuarios.
+
+                🔹 Cómo funciona:
+
+                Usa createStackNavigator para gestionar la pantalla de autenticación.
+                Pasa el parámetro role para diferenciar entre usuario y conductor.
+                Oculta el encabezado en la navegación
+
+                RootStack.js
+
+                Maneja la navegación principal de la app.
+
+                🔹 Cómo funciona:
+
+                Define el flujo inicial con WelcomeScreen.
+                Incluye las rutas de autenticación (AuthNavigator) y usuario (UserNavigator).
+                Usa createStackNavigator sin mostrar encabezados​                
+
+                UserNavigator.js
+
+                Maneja la navegación entre las pantallas del usuario.
+
+                🔹 Cómo funciona:
+
+                Usa createStackNavigator para definir el flujo de usuario.
+                Incluye pantallas como Home, Geolocalización, Confirmación, Progreso del viaje y Mapa.
+                Oculta los encabezados de la navegación​
+
+            screens\
+
+                auth\
+
+                   AuthScreen.js
+
+                    Maneja el inicio de sesión y registro de usuarios.
+
+                    🔹 Cómo funciona:
+
+                    Usa Firebase Auth para autenticación.
+                    Guarda datos adicionales en Firestore al registrar un usuario.
+                    Muestra alertas y valida errores en el proceso​
+
+                   WelcomeScreen.js 
+
+                    Muestra la pantalla de bienvenida y permite elegir el rol de usuario.
+
+                    🔹 Cómo funciona:
+
+                    Muestra un mensaje de bienvenida e imagen.
+                    Permite seleccionar el rol (usuario).
+                    Navega a AuthNavigator con el rol seleccionado​WelcomeScreen
+
+                user\
+
+                    UserConfirmationScreen.js
+
+                    Muestra el estado y progreso del viaje del usuario.
+
+                    🔹 Cómo funciona:
+
+                    Usa useTripProgress para obtener datos del viaje.
+                    Muestra la ubicación de origen, destino y estado del viaje.
+                    Indica si la información aún no está disponible
+
+                    UserGeoLocationScreen.js
+
+                    Muestra la ubicación del usuario en un mapa y permite confirmar o editar la dirección.
+
+                    🔹 Cómo funciona:
+
+                    Obtiene la ubicación actual con expo-location.
+                    Usa react-native-maps para mostrar el mapa y un marcador.
+                    Permite ingresar manualmente la dirección y guardarla con ButtonBuildCards​
+
+                    UserHomeScreen.js
+
+                    Muestra la pantalla de inicio del usuario y permite buscar un taxi.
+
+                    🔹 Cómo funciona:
+
+                    Obtiene el nombre del usuario desde Firestore.
+                    Muestra un botón para buscar un taxi.
+                    Simula un tiempo de espera antes de navegar a UserGeoLocationScreen​UserHomeScreen.
+
+                    UserMapViewScreen.js
+
+                    Muestra la ubicación del usuario y del conductor en el mapa.
+
+                    🔹 Cómo funciona:
+
+                    Obtiene los datos del viaje en tiempo real desde Firestore.
+                    Muestra el origen, destino y teléfono del conductor.
+                    Permite llamar al conductor desde la app
+
+                    UserTripProgressScreen.js
+
+                    📌 Función del archivo UserTripProgressScreen.js
+                    Muestra el progreso del viaje en un mapa en tiempo real.
+
+                    🔹 Cómo funciona:
+
+                    Usa TripContext para obtener los datos del viaje.
+                    Muestra la ubicación del conductor en un MapView.
+                    Indica si el conductor aún no tiene ubicación disponible​
+
+                services\ (vacío)
+                styles\
+
+                    globalStyles.js
+
+                    Define estilos globales reutilizables en la app.
+
+                    🔹 Cómo funciona:
+
+                    Usa StyleSheet.create() para definir estilos comunes.
+                    Incluye configuraciones para contenedores, textos, botones y errores.
+                    Utiliza el archivo theme.js para colores y espaciado​
+
+                    theme.js
+
+                    Define la paleta de colores y tipografías globales de la app.
+
+                    🔹 Cómo funciona:
+
+                    Contiene colores para fondos, textos y botones.
+                    Especifica fuentes regular y bold.
+                    Se usa en los estilos globales y componentes​
+
+                utils\
+
+                    validators.js
+
+                    Valida correos electrónicos y contraseñas.
+
+                    🔹 Cómo funciona:
+
+                    validateEmail(): Verifica que el formato del email sea válido.
+                    validatePassword(): Requiere al menos 8 caracteres, una mayúscula, un número y un símbolo
+
+App.js
+
+Inicializa la aplicación y gestiona la autenticación.
+
+🔹 Cómo funciona:
+
+Usa auth.onAuthStateChanged() para detectar usuarios activos.
+Proporciona los contextos UserProvider y DriverProvider.
+Maneja la navegación con NavigationContainer y RootStack
+
+app.json
+
+Configura Expo para la app.
+
+🔹 Cómo funciona:
+
+Define el nombre, iconos y pantalla de inicio.
+Configura la orientación y el estilo de la interfaz.
+Especifica opciones para iOS, Android y web​
+
+babel.config.js
+
+Configura Babel para la app de React Native.
+
+🔹 Cómo funciona:
+
+Usa babel-preset-expo para Expo.
+Habilita @babel/preset-react con runtime: "automatic".
+Carga variables de entorno desde .env.
+Soporta react-native-reanimated
+
+index.js
+
+Registra la aplicación principal en Expo.
+
+🔹 Cómo funciona:
+
+Importa y ejecuta registerRootComponent(App).
+Asegura la correcta inicialización en Expo Go o una compilación nativa​index
+
+package-lock.json
+
+Mantiene un registro exacto de las versiones de las dependencias instaladas.
+
+🔹 Cómo funciona:
+
+Asegura que todos los entornos usen las mismas versiones de paquetes.
+Guarda las URL de descarga y los hash de integridad de cada dependencia.
+Se genera automáticamente al instalar paquetes con npm install
+
+package.json
+
+Define las dependencias, scripts y configuración de la app.
+
+🔹 Cómo funciona:
+
+Especifica el nombre, versión y punto de entrada (index.js).
+Contiene los scripts de ejecución (expo start, android, ios).
+Lista las dependencias de React Native, Firebase y navegación.
+Configura Expo para Android e iOS
+                
+
+
+

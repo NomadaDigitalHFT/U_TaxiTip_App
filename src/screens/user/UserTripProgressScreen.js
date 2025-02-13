@@ -1,93 +1,62 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, Button, Alert, ActivityIndicator } from "react-native";
-import { getFirestore, doc, onSnapshot, updateDoc } from "firebase/firestore";
-import { useNavigation } from "@react-navigation/native";
+import React from "react";
+import { ActivityIndicator } from "react-native";
+import { useRoute } from "@react-navigation/native";
+import useTripProgress from "./../../hooks/useTripProgress";
+import ButtonAcceptTrip from "./../../elements/Buttons/buttonAcceptTrip";
 import ButtonCancelCards from "./../../elements/Buttons/buttonCancelCards";
+import { Container, Card, Title, StyledText } from "./../../styles/StyleTirpProgressScreen";
 
-const UserTripProgressScreen = ({ route }) => {
+const UserTripProgressScreen = () => {
+  const route = useRoute();
   const { userCardsId } = route.params || {};
-  const db = getFirestore();
-  const navigation = useNavigation();
-  const [tripData, setTripData] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (!userCardsId) {
-      Alert.alert("Error", "No se recibió el ID del viaje.");
-      navigation.goBack();
-      return;
-    }
-  
-    const requestRef = doc(db, "userCards", userCardsId);
-    const unsubscribe = onSnapshot(requestRef, (docSnap) => {
-      if (docSnap.exists()) {
-        const data = docSnap.data();
-        setTripData(data);
-        console.log("📡 Datos recibidos en UserTripProgressScreen:", data);
-  
-        // 🔹 Si el status cambia a "completed", terminar el seguimiento del viaje
-        if (data.status === "completed") {
-          console.log("✅ Viaje finalizado. Redirigiendo...");
-          unsubscribe();
-          navigation.reset({ index: 0, routes: [{ name: "UserHomeScreen" }] });
-        }
-      } else {
-        Alert.alert("Error", "No se encontró la solicitud en Firestore.");
-        navigation.goBack();
-      }
-      setLoading(false);
-    });
-  
-    return () => unsubscribe();
-  }, [userCardsId]);
-  
-
-  const confirmarTarifa = async () => {
-    if (!tripData) {
-      Alert.alert("Espera", "Todavía estamos obteniendo los datos del viaje.");
-      return;
-    }
-
-    try {
-      await updateDoc(doc(db, "userCards", userCardsId), { status: "confirmed" });
-      navigation.navigate("UserMapViewScreen", { userCardsId });
-    } catch (error) {
-      Alert.alert("Error", "No se pudo confirmar la tarifa. Intenta de nuevo.");
-    }
-  };
+  const { tripData, loading } = useTripProgress(userCardsId);
 
   if (loading) {
     return (
-      <View style={styles.container}>
-        <ActivityIndicator size="large" color="#0000ff" />
-        <Text>Cargando detalles del viaje...</Text>
-      </View>
+      <Container>
+        <StyledText>Buscando un taxi...</StyledText>
+        <ActivityIndicator size="large" color="#1E88E5" />
+      </Container>
+    );
+  }
+
+  if (!tripData || tripData.status !== "fare_confirmed") {
+    return (
+      <Container>
+        <StyledText>No se ha confirmado la tarifa aún.</StyledText>
+      </Container>
     );
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>🚖 Tu Viaje en Progreso</Text>
-      <Text>📍 Origen (Usuario): {tripData?.lastLocation?.address || "N/A"}</Text>
-      <Text>🎯 Destino (Conductor): {tripData?.driverLocation?.latitude}, {tripData?.driverLocation?.longitude}</Text>
-      <Text>⏳ Tiempo Estimado: {tripData?.estimatedTime || "N/A"} min</Text>
-      <Text>💰 Tarifa Estimada: {tripData?.fare ? `${tripData.fare}€` : "Calculando..."}</Text>
-      <Text>🚖 Ubicación del Conductor en Tiempo Real: {tripData?.driverLocation?.latitude}, {tripData?.driverLocation?.longitude}</Text>
+    <Container>
+      <Card>
+        <Title>🚖 Tu Viaje</Title>
+        <StyledText>📍 Dirección del Usuario: {tripData.lastLocation.address}</StyledText>
+        <StyledText>📏 Tu Conductor esta a: {tripData.distance.toFixed(2)} km</StyledText>
+        <StyledText>💰 Tarifa Estimada: {tripData.fare.toFixed(2)}€</StyledText>
 
-      <Button title="ACEPTAR TARIFA" color="green" onPress={confirmarTarifa} />
-
-      {/* 🔹 Ahora pasamos el userCardsId correctamente al botón de cancelar */}
-      <ButtonCancelCards userCardsId={userCardsId} />
-    </View>
+        {/* Botones de acción */}
+        <ButtonAcceptTrip tripId={userCardsId} />
+        <ButtonCancelCards userCardsId={userCardsId} screenName="UserHomeScreen" />
+      </Card>
+    </Container>
   );
 };
 
-const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", alignItems: "center", padding: 20 },
-  title: { fontSize: 22, fontWeight: "bold", marginBottom: 10 },
-});
-
 export default UserTripProgressScreen;
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

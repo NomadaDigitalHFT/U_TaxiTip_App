@@ -1,1 +1,0 @@
-//configurar helpres.js para manejar las funciones de ayuda

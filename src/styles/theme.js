@@ -5,11 +5,19 @@ const theme = {
     darkBlue: "#1565D6",
     white: "#FFFFFF",
     lightGreen: "#4CAF50",
-    lightRed: "#F44336",
+    lightRed: "#c9184a",
     lightOrange: "#FF9800",
     gray: "#666",
     lightGray: "#ccc",
     black: "#000000",
+
+    // Nueva paleta de colores
+    softWhite: "#f6f7ff",
+    brightYellow: "#f8eb22",
+    pastelGreen: "#daf8e0",
+    darkGray: "#51514b",
+    mintGreen: "#2ccba2",
+    skyBlue: "#2c99cb",
   },
   fonts: {
     regular: "WorkSans-Regular",
@@ -18,3 +26,4 @@ const theme = {
 };
 
 export default theme;
+

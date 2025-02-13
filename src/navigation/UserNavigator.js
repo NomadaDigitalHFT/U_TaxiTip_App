@@ -7,10 +7,6 @@ import UserConfirmationScreen from "./../screens/user/UserConfirmationScreen";
 import UserTripProgressScreen from "./../screens/user/UserTripProgressScreen";
 import UserMapViewScreen from "./../screens/user/UserMapViewScreen";
 
-
-// import ReviewScreen from "../screens/user/ReviewScreen";
-// import UserProfileScreen from "../screens/user/UserProfileScreen";
-
 const Stack = createStackNavigator();
 
 const UserNavigator = () => (
@@ -21,12 +17,9 @@ const UserNavigator = () => (
     <Stack.Screen name="UserConfirmationScreen" component={UserConfirmationScreen} />
     <Stack.Screen name="UserTripProgressScreen" component={UserTripProgressScreen} />
     <Stack.Screen name="UserMapViewScreen" component={UserMapViewScreen} />
-    
-    {/* 
-    <Stack.Screen name="ReviewScreen" component={ReviewScreen} />
-    <Stack.Screen name="UserProfileScreen" component={UserProfileScreen} />*/}
   </Stack.Navigator> 
 );
 
 export default UserNavigator;
+
 
