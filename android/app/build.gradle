@@ -2,15 +2,15 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 
 android {
-    namespace 'com.company.app_usuario'
+    namespace 'com.anonymous.app_usuario'
     compileSdkVersion 34
 
     defaultConfig {
-        applicationId "com.company.app_usuario"
+        applicationId 'com.anonymous.app_usuario'
         minSdkVersion 21
         targetSdkVersion 34
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.0"
     }
 
     buildTypes {

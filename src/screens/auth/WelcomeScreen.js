@@ -1,32 +1,40 @@
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
+import { Image } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import {
+  Container,
+  Title,
+  Subtitle,
+  StyledButton,
+  ButtonText,
+  SwitchButton,
+  SwitchButtonText
+} from "./../../styles/StyleWelcomeUser";  // Importamos los estilos actualizados
 
-const WelcomeScreen = ({ navigation }) => {
+const WelcomeScreen = () => {
+  const navigation = useNavigation();
+
   const handleNavigation = (role) => {
     navigation.navigate("AuthNavigator", { role });
   };
 
   return (
-    <View style={styles.container}>
-      <Image source={require("./../../assets/icons/Moneda_taxitip.png")} style={styles.profileImage} />
-      <Text style={styles.title}>¡Bienvenido a TaxiTip!</Text>
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button} onPress={() => handleNavigation("usuario")}>
-          <Text style={styles.buttonText}>Usuario</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+    <Container>
+      <Image source={require("./../../assets/icons/Moneda_taxitip.png")} style={{ width: 100, height: 100, borderRadius: 50, margin: 20 }} />
+      <Title>¡Bienvenido a TaxiTip!</Title>
+      <Subtitle>Elige tu rol para continuar</Subtitle>
+
+      <StyledButton onPress={() => handleNavigation("usuario")}>
+        <ButtonText>Usuario</ButtonText>
+      </StyledButton>
+
+      {/* Puedes agregar un botón similar para "Conductor" si lo necesitas */}
+      <SwitchButton>
+        <SwitchButtonText>¿Eres conductor? Ingresa aquí</SwitchButtonText>
+      </SwitchButton>
+    </Container>
   );
 };
-
-const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", alignItems: "center", padding: 20 },
-  profileImage: { width: 100, height: 100, borderRadius: 50, margin: 20 },
-  title: { fontSize: 24, fontWeight: "bold", textAlign: "center", marginBottom: 30 },
-  buttonContainer: { flexDirection: "row", justifyContent: "space-around", width: "100%" },
-  button: { backgroundColor: "#4682b4", padding: 15, borderRadius: 8, width: "40%", alignItems: "center" },
-  buttonText: { color: "#ffffff", fontWeight: "bold", fontSize: 16 },
-});
 
 export default WelcomeScreen;
 

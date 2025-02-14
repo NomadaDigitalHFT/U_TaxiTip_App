@@ -1,77 +1,85 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import styled from 'styled-components/native'; // Usamos styled-components
+import { TouchableOpacity } from 'react-native';
+
+const CardContainer = styled.View`
+  flex: 1;
+  background-color: ${(props) => props.theme.colors.card};
+  border-radius: 10px;
+  padding: 10px;
+  margin: 10px;
+  shadow-color: ${(props) => props.theme.colors.shadow};
+  shadow-offset: { width: 0, height: 2 };
+  shadow-opacity: 0.1;
+  shadow-radius: 4;
+  elevation: 3;
+`;
+
+const Title = styled.Text`
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: ${(props) => props.theme.colors.text};
+`;
+
+const InfoText = styled.Text`
+  font-size: 16px;
+  margin-bottom: 5px;
+  color: ${(props) => props.theme.colors.textSecondary};
+`;
+
+const ButtonContainer = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+  margin-top: 10px;
+`;
+
+const CancelButton = styled.TouchableOpacity`
+  background-color: ${(props) => props.theme.colors.error};
+  padding: 10px;
+  border-radius: 5px;
+  flex: 1;
+  margin-right: 5px;
+`;
+
+const SearchButton = styled.TouchableOpacity`
+  background-color: ${(props) => props.theme.colors.primary};
+  padding: 10px;
+  border-radius: 5px;
+  flex: 1;
+  margin-left: 5px;
+`;
+
+const ButtonText = styled.Text`
+  color: ${(props) => props.theme.colors.white};
+  text-align: center;
+  font-weight: bold;
+`;
 
 const UserCard = ({ tripDetails, onCancel, onSearch }) => {
   return (
-    <View style={styles.cardContainer}>
-      <Text style={styles.title}>Detalles del Viaje</Text>
-      <Text style={styles.info}>Nº Ticket: {tripDetails.ticketNumber}</Text>
-      <Text style={styles.info}>Nombre: {tripDetails.name}</Text>
-      <Text style={styles.info}>Licencia: {tripDetails.license}</Text>
-      <Text style={styles.info}>Teléfono: {tripDetails.phone}</Text>
-      <Text style={styles.info}>Distancia: {tripDetails.distance} km</Text>
-      <Text style={styles.info}>Aprox. Tip: €{tripDetails.price}</Text>
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.cancelButton} onPress={onCancel}>
-          <Text style={styles.buttonText}>Cancelar Viaje</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.searchButton} onPress={onSearch}>
-          <Text style={styles.buttonText}>Busca mi Taxi</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+    <CardContainer>
+      <Title>Detalles del Viaje</Title>
+      <InfoText>Nº Ticket: {tripDetails.ticketNumber}</InfoText>
+      <InfoText>Nombre: {tripDetails.name}</InfoText>
+      <InfoText>Licencia: {tripDetails.license}</InfoText>
+      <InfoText>Teléfono: {tripDetails.phone}</InfoText>
+      <InfoText>Distancia: {tripDetails.distance} km</InfoText>
+      <InfoText>Aprox. Tip: €{tripDetails.price}</InfoText>
+      <ButtonContainer>
+        <CancelButton onPress={onCancel}>
+          <ButtonText>Cancelar Viaje</ButtonText>
+        </CancelButton>
+        <SearchButton onPress={onSearch}>
+          <ButtonText>Busca mi Taxi</ButtonText>
+        </SearchButton>
+      </ButtonContainer>
+    </CardContainer>
   );
 };
 
-const styles = StyleSheet.create({
-  cardContainer: {
-    flex: 1,
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    padding: 10,
-    margin: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  info: {
-    fontSize: 16,
-    marginBottom: 5,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 10,
-  },
-  cancelButton: {
-    backgroundColor: '#dc3545',
-    padding: 10,
-    borderRadius: 5,
-    flex: 1,
-    marginRight: 5,
-  },
-  searchButton: {
-    backgroundColor: '#007BFF',
-    padding: 10,
-    borderRadius: 5,
-    flex: 1,
-    marginLeft: 5,
-  },
-  buttonText: {
-    color: '#fff',
-    textAlign: 'center',
-    fontWeight: 'bold',
-  },
-});
-
 export default UserCard;
+
 
 
 

@@ -1,13 +1,22 @@
 import React, { useState } from "react";
-import styled from "styled-components/native";
 import { ActivityIndicator } from "react-native";
+import {
+  Container,
+  Title,
+  Input,
+  StyledButton,
+  ButtonText,
+  SwitchButton,
+  SwitchButtonText,
+} from "./../../styles/StyleAuhtUser"; // Importamos los estilos
+
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import { setDoc, doc } from "firebase/firestore";
 import { auth, db } from "./../../firebase/firebaseConfig";
-import Alertas from "./../../elements/Alertas/Alertas"; // Importamos el componente de alertas
+import Alertas from "./../../elements/Alertas/Alertas"; // Componente de alertas
 
 const AuthScreen = ({ navigation }) => {
   const [isLogin, setIsLogin] = useState(true);
@@ -24,17 +33,14 @@ const AuthScreen = ({ navigation }) => {
   const [alertType, setAlertType] = useState("success");
   const [alertVisible, setAlertVisible] = useState(false);
 
-  // Función para mostrar alertas con mensaje dinámico
+  // Función para mostrar alertas
   const showAlert = (message, type = "success") => {
     setAlertMessage(message);
     setAlertType(type);
     setAlertVisible(true);
   };
 
-  // Función para cerrar la alerta manualmente
-  const closeAlert = () => {
-    setAlertVisible(false);
-  };
+  const closeAlert = () => setAlertVisible(false);
 
   const handleInputChange = (field, value) => {
     setFormData({ ...formData, [field]: value });
@@ -74,29 +80,16 @@ const AuthScreen = ({ navigation }) => {
 
     try {
       if (isLogin) {
-        // Lógica para iniciar sesión
-        const userCredential = await signInWithEmailAndPassword(
-          auth,
-          email,
-          password
-        );
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
         showAlert("Has iniciado sesión correctamente.", "success");
         navigation.navigate("UserNavigator");
       } else {
-        // Lógica para registro
-        const userCredential = await createUserWithEmailAndPassword(
-          auth,
-          email,
-          password
-        );
-
-        // Guardar datos adicionales en Firestore
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         await setDoc(doc(db, "usuarios", userCredential.user.uid), {
           ...profileData,
           email,
           createdAt: new Date().toISOString(),
         });
-
         showAlert("Tu cuenta ha sido creada con éxito.", "success");
         navigation.navigate("UserNavigator");
       }
@@ -136,110 +129,27 @@ const AuthScreen = ({ navigation }) => {
 
       {!isLogin && (
         <>
-          <Input
-            placeholder="Nombre"
-            value={formData.name}
-            onChangeText={(value) => handleInputChange("name", value)}
-          />
-          <Input
-            placeholder="Apellidos"
-            value={formData.lastName}
-            onChangeText={(value) => handleInputChange("lastName", value)}
-          />
-          <Input
-            placeholder="Teléfono"
-            value={formData.phone}
-            keyboardType="phone-pad"
-            onChangeText={(value) => handleInputChange("phone", value)}
-          />
+          <Input placeholder="Nombre" value={formData.name} onChangeText={(value) => handleInputChange("name", value)} />
+          <Input placeholder="Apellidos" value={formData.lastName} onChangeText={(value) => handleInputChange("lastName", value)} />
+          <Input placeholder="Teléfono" value={formData.phone} keyboardType="phone-pad" onChangeText={(value) => handleInputChange("phone", value)} />
         </>
       )}
 
-      <Input
-        placeholder="Correo Electrónico"
-        value={formData.email}
-        onChangeText={(value) => handleInputChange("email", value)}
-        keyboardType="email-address"
-      />
-      <Input
-        placeholder="Contraseña"
-        value={formData.password}
-        onChangeText={(value) => handleInputChange("password", value)}
-        secureTextEntry
-      />
-      {!isLogin && (
-        <Input
-          placeholder="Confirmar Contraseña"
-          value={formData.confirmPassword}
-          onChangeText={(value) => handleInputChange("confirmPassword", value)}
-          secureTextEntry
-        />
-      )}
+      <Input placeholder="Correo Electrónico" value={formData.email} onChangeText={(value) => handleInputChange("email", value)} keyboardType="email-address" />
+      <Input placeholder="Contraseña" value={formData.password} onChangeText={(value) => handleInputChange("password", value)} secureTextEntry />
+      {!isLogin && <Input placeholder="Confirmar Contraseña" value={formData.confirmPassword} onChangeText={(value) => handleInputChange("confirmPassword", value)} secureTextEntry />}
 
-      {isLoading ? (
-        <ActivityIndicator size="large" color="#0000ff" />
-      ) : (
+      {isLoading ? <ActivityIndicator size="large" color="#0000ff" /> : (
         <StyledButton onPress={handleAuth}>
           <ButtonText>{isLogin ? "Entrar" : "Registrarse"}</ButtonText>
         </StyledButton>
       )}
 
       <SwitchButton onPress={() => setIsLogin(!isLogin)}>
-        <SwitchButtonText>
-          {isLogin ? "¿No tienes cuenta? Regístrate" : "¿Ya tienes cuenta? Inicia sesión"}
-        </SwitchButtonText>
+        <SwitchButtonText>{isLogin ? "¿No tienes cuenta? Regístrate" : "¿Ya tienes cuenta? Inicia sesión"}</SwitchButtonText>
       </SwitchButton>
     </Container>
   );
 };
 
-// Estilos actualizados
-const Container = styled.View`
-  flex: 1;
-  justify-content: center;
-  padding: 20px;
-`;
-
-const Title = styled.Text`
-  font-size: 24px;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 20px;
-`;
-
-const Input = styled.TextInput`
-  border-width: 1px;
-  border-color: #ccc;
-  padding: 10px;
-  margin-bottom: 15px;
-  border-radius: 5px;
-`;
-
-const StyledButton = styled.TouchableOpacity`
-  background-color: #007bff;
-  padding: 15px;
-  border-radius: 8px;
-  align-items: center;
-  margin-top: 10px;
-`;
-
-const ButtonText = styled.Text`
-  color: white;
-  font-size: 16px;
-  font-weight: bold;
-`;
-
-const SwitchButton = styled.TouchableOpacity`
-  margin-top: 15px;
-`;
-
-const SwitchButtonText = styled.Text`
-  color:rgb(44, 46, 49);
-  text-align: center;
-  font-size: 16px;
-  font-weight: bold;
-  text-decoration: underline;
-`;
-
 export default AuthScreen;
-

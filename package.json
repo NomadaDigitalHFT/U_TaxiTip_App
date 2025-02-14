@@ -19,9 +19,22 @@
     },
     "ios": {
       "bundleIdentifier": "com.company.app_usuario"
+    },
+    "doctor": {
+      "reactNativeDirectoryCheck": {
+        "exclude": [
+          "dotenv",
+          "firebase",
+          "nanoid",
+          "react-helmet",
+          "styled-components",
+          "yup"
+        ]
+      }
     }
   },
   "dependencies": {
+    "@expo-google-fonts/work-sans": "^0.2.3",
     "@expo/metro-runtime": "~4.0.0",
     "@hookform/resolvers": "^3.10.0",
     "@lottiefiles/dotlottie-react": "^0.6.5",
@@ -33,7 +46,8 @@
     "@react-navigation/stack": "^7.1.1",
     "axios": "^1.7.9",
     "dotenv": "^16.4.7",
-    "expo": "52.0.32",
+    "expo": "^52.0.33",
+    "expo-font": "~13.0.3",
     "expo-location": "18.0.6",
     "expo-status-bar": "~2.0.1",
     "expo-system-ui": "~4.0.8",
@@ -49,7 +63,7 @@
     "react-native-dotenv": "^3.4.11",
     "react-native-gesture-handler": "~2.20.2",
     "react-native-get-random-values": "^1.11.0",
-    "react-native-maps": "^1.20.1",
+    "react-native-maps": "1.18.0",
     "react-native-reanimated": "~3.16.1",
     "react-native-safe-area-context": "4.12.0",
     "react-native-screens": "~4.4.0",

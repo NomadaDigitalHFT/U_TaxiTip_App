@@ -1,34 +1,32 @@
 import styled from "styled-components/native";
-import theme from "./theme";
 
-const Container = styled.View`
+// Usamos props.theme para los colores, fuentes, espaciados y bordes
+export const Container = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
-  background-color: ${theme.colors.lightBlue};
+  background-color: ${(props) => props.theme?.colors?.background || "#FFF"};  /* ✅ Fondo con fallback */
 `;
 
-const MapContainer = styled.View`
+export const MapContainer = styled.View`
   flex: 1;
   width: 100%;
   height: 100%;
 `;
 
-const Title = styled.Text`
+export const Title = styled.Text`
   font-size: 24px;
-  font-family: ${theme.fonts.bold};
-  color: ${theme.colors.darkBlue};
+  font-family: ${({ theme }) => theme?.fonts?.bold || "System"}; /* ✅ Fallback a "System" */
+  color: ${({ theme }) => theme?.colors?.primary || "#000"}; /* ✅ Fallback a negro */
   text-align: center;
-  margin: 10px;
+  margin: ${({ theme }) => (typeof theme?.spacing?.small === "number" ? `${theme.spacing.small}px` : "8px")}; /* ✅ Evitar errores */
 `;
 
-const InputContainer = styled.View`
+export const InputContainer = styled.View`
   position: absolute;
   bottom: 20px;
   width: 90%;
-  background-color: white;
-  padding: 10px;
-  border-radius: 10px;
+  background-color: ${(props) => props.theme?.colors?.card || "#FFF"}; /* ✅ Fondo con fallback */
+  padding: ${(props) => (typeof props.theme?.spacing?.medium === "number" ? `${props.theme.spacing.medium}px` : "16px")}; /* ✅ Evitar errores */
+  border-radius: ${(props) => (typeof props.theme?.borderRadius?.medium === "number" ? `${props.theme.borderRadius.medium}px` : "8px")}; /* ✅ Evitar errores */
 `;
-
-export { Container, MapContainer, Title, InputContainer };

@@ -2,7 +2,7 @@ import React from "react";
 import { ActivityIndicator } from "react-native";
 import { useConfirmation } from "./../../hooks/useConfirmation";
 import ButtonCancelCards from "./../../elements/Buttons/buttonCancelCards";
-import { Container, Card, Title, StyledText } from "./../../styles/StyleConfirmationScreen";
+import { Container, Card, Title, StyledText } from "./../../styles/StyleConfirmationScreen"; // Asegúrate de que este archivo esté actualizado
 
 const UserConfirmationScreen = ({ route }) => {
   const { userCardsId } = route.params || {};
@@ -14,7 +14,7 @@ const UserConfirmationScreen = ({ route }) => {
         <Title>🚖 Tu Viaje</Title>
         <StyledText>📍 Origen: Ubicación seleccionada</StyledText>
         <StyledText>⏳ Un momento por favor, estamos buscando un taxi para ti...</StyledText>
-        {loading && <ActivityIndicator size="large" color="#1E88E5" />}
+        {loading && <ActivityIndicator size="large" color={props => props.theme.colors.primary} />}  {/* Usar color dinámico del tema */}
         
         {/* Solo mostrar el botón de cancelar */}
         <ButtonCancelCards userCardsId={userCardsId} screenName="UserHomeScreen" />
@@ -24,6 +24,7 @@ const UserConfirmationScreen = ({ route }) => {
 };
 
 export default UserConfirmationScreen;
+
 
 
 

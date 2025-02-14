@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { View, ActivityIndicator } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
+import { ThemeProvider } from "styled-components/native";
+import { lightTheme, darkTheme } from "./src/styles/theme"; 
 import RootStack from "./src/navigation/RootStack";
 import { auth } from "./src/firebase/firebaseConfig";
 import { TripProvider } from "./src/context/TripContext";
@@ -9,6 +11,8 @@ import { UserProvider } from "./src/context/UserContext";
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState(null);
+  const [isDarkMode, setIsDarkMode] = useState(false); // Estado de inicio del tema
+
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(user => {
@@ -28,14 +32,17 @@ const App = () => {
   }
 
   return (
-    <UserProvider>
-      <TripProvider>
-        <NavigationContainer>
-          <RootStack />
-        </NavigationContainer>
-      </TripProvider>
-    </UserProvider>
+    <ThemeProvider theme={isDarkMode ? darkTheme : lightTheme}>
+      <UserProvider>
+        <TripProvider>
+          <NavigationContainer>
+            <RootStack />
+          </NavigationContainer>
+        </TripProvider>
+      </UserProvider>
+    </ThemeProvider>
   );
 };
 
 export default App;
+

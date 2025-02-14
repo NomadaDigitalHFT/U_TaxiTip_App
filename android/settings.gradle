@@ -6,7 +6,7 @@ pluginManagement {
     }
 }
 
-rootProject.name = "app_usuario"
+rootProject.name = 'app_usuario'
 
 include ':app'
 

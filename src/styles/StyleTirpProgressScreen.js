@@ -4,27 +4,41 @@ export const Container = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
-  background-color: #f5f5f5;
-  padding: 20px;
+  background-color: ${(props) => props.theme?.colors?.background || "#FFF"}; /* ✅ Agregado fallback */
+  padding: ${(props) =>
+    typeof props.theme?.spacing?.medium === "number"
+      ? `${props.theme.spacing.medium}px`
+      : "16px"}; /* ✅ Evita errores */
 `;
 
 export const Card = styled.View`
-  background-color: white;
-  padding: 25px;
-  border-radius: 15px;
+  background-color: ${(props) => props.theme?.colors?.card || "#FFF"}; /* ✅ Fallback */
+  padding: ${(props) =>
+    typeof props.theme?.spacing?.large === "number"
+      ? `${props.theme.spacing.large}px`
+      : "24px"}; /* ✅ Corrección */
+  border-radius: ${(props) =>
+    typeof props.theme?.borderRadius?.large === "number"
+      ? `${props.theme.borderRadius.large}px`
+      : "12px"}; /* ✅ Evita errores */
   width: 90%;
   max-width: 400px;
   align-items: center;
   justify-content: center;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
-  elevation: 8;
+  box-shadow: 0px 4px 10px
+    ${(props) => props.theme?.colors?.shadow || "rgba(0,0,0,0.1)"}; /* ✅ Fallback */
+  elevation: 8; /* Para dispositivos Android */
 `;
 
 export const Title = styled.Text`
   font-size: 22px;
-  font-weight: bold;
-  margin-bottom: 15px;
+  font-family: ${(props) => props.theme?.fonts?.bold || "System"}; /* ✅ Corrección */
+  margin-bottom: ${(props) =>
+    typeof props.theme?.spacing?.medium === "number"
+      ? `${props.theme.spacing.medium}px`
+      : "16px"}; /* ✅ Evita errores */
   text-align: center;
+  color: ${(props) => props.theme?.colors?.text || "#000"}; /* ✅ Fallback */
 `;
 
 export const StyledText = styled.Text`
@@ -32,4 +46,5 @@ export const StyledText = styled.Text`
   margin-top: 5px;
   margin-bottom: 5px;
   text-align: center;
+  color: ${(props) => props.theme?.colors?.textSecondary || "#666"}; /* ✅ Fallback */
 `;

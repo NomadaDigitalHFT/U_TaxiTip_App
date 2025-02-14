@@ -1,40 +1,12 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
-import theme from "./../../styles/theme";
 import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 import { TextInput } from "react-native";
-import ButtonBuildCards from "./../../elements/Buttons/buttonBuildCards";
-const Container = styled.View`
-  flex: 1;
-  justify-content: center;
-  align-items: center;
-  background-color: ${theme.colors.lightBlue};
-`;
+import ButtonBuildCards from "./../../elements/Buttons/buttonBuildCards";  // Asegúrate de que este componente también use styled-components
 
-const MapContainer = styled.View`
-  flex: 1;
-  width: 100%;
-  height: 100%;
-`;
-
-const Title = styled.Text`
-  font-size: 24px;
-  font-family: ${theme.fonts.bold};
-  color: ${theme.colors.darkBlue};
-  text-align: center;
-  margin: 10px;
-`;
-
-const InputContainer = styled.View`
-  position: absolute;
-  bottom: 20px;
-  width: 90%;
-  background-color: white;
-  padding: 10px;
-  border-radius: 10px;
-`;
+import { Container, MapContainer, Title, InputContainer } from "./../../styles/StyleGeoLocation";  // Importamos los estilos actualizados
 
 const UserGeoLocationScreen = () => {
   const [location, setLocation] = useState(null);
@@ -48,8 +20,7 @@ const UserGeoLocationScreen = () => {
       if (status !== "granted") {
         setErrorMsg("Permiso de ubicación denegado. Ingresa tu dirección manualmente.");
         setLocation({ coords: { latitude: 0, longitude: 0 } }); // Fallback para evitar error de undefined
-    }
-  
+      }
 
       let currentLocation = await Location.getCurrentPositionAsync({});
       setLocation(currentLocation);
@@ -70,34 +41,41 @@ const UserGeoLocationScreen = () => {
     <Container>
       <Title>UserGeoLocationScreen.js </Title>
       {location && location.coords ? (
-    <MapContainer>
-      <MapView style={{ flex: 1 }} initialRegion={{
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
-      }}>
-        <Marker
-          coordinate={{
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-          }}
-          title={address}
-        />
-      </MapView>
-    </MapContainer>
-  ) : (
-    <Title>{errorMsg || "Cargando ubicación..."}</Title>
-  )}
+        <MapContainer>
+          <MapView
+            style={{ flex: 1 }}
+            initialRegion={{
+              latitude: location.coords.latitude,
+              longitude: location.coords.longitude,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421,
+            }}
+          >
+            <Marker
+              coordinate={{
+                latitude: location.coords.latitude,
+                longitude: location.coords.longitude,
+              }}
+              title={address}
+            />
+          </MapView>
+        </MapContainer>
+      ) : (
+        <Title>{errorMsg || "Cargando ubicación..."}</Title>
+      )}
 
       <InputContainer>
         <TextInput
           placeholder="Confirma o edita tu dirección"
           value={address}
           onChangeText={setAddress}
-          style={{ marginBottom: 10, padding: 10, borderWidth: 1, borderRadius: 5 }}
+          style={{
+            marginBottom: 10,
+            padding: 10,
+            borderWidth: 1,
+            borderRadius: 5,
+          }}
         />
-        {/* Se usa el nuevo componente para guardar la ubicación */}
         <ButtonBuildCards address={address} location={location} />
       </InputContainer>
     </Container>
@@ -105,6 +83,7 @@ const UserGeoLocationScreen = () => {
 };
 
 export default UserGeoLocationScreen;
+
 
 
 
