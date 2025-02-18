@@ -28,13 +28,17 @@ const UserTripProgressScreen = () => {
     );
   }
 
+  // ✅ Asegurar que distance y fare son valores numéricos antes de llamar toFixed(2)
+  const distance = tripData.distance ? tripData.distance.toFixed(2) : "0.00";
+  const fare = tripData.fare ? tripData.fare.toFixed(2) : "0.00";
+
   return (
     <Container>
       <Card>
         <Title>🚖 Tu Viaje</Title>
-        <StyledText>📍 Dirección del Usuario: {tripData.lastLocation.address}</StyledText>
-        <StyledText>📏 Tu Conductor esta a: {tripData.distance.toFixed(2)} km</StyledText>
-        <StyledText>💰 Tarifa Estimada: {tripData.fare.toFixed(2)}€</StyledText>
+        <StyledText>📍 Dirección del Usuario: {tripData.lastLocation?.address || "Desconocida"}</StyledText>
+        <StyledText>📏 Tu Conductor está a: {distance} km</StyledText>
+        <StyledText>💰 Tarifa Estimada: {fare}€</StyledText>
 
         {/* Botones de acción */}
         <ButtonAcceptTrip tripId={userCardsId} />
@@ -45,6 +49,7 @@ const UserTripProgressScreen = () => {
 };
 
 export default UserTripProgressScreen;
+
 
 
 

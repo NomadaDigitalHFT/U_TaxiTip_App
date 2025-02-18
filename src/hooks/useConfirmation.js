@@ -25,7 +25,7 @@ export const useConfirmation = (userCardsId) => {
       }
     });
 
-    return () => unsubscribe(); // Limpiar la escucha al desmontar el componente
+    return () => unsubscribe();
   }, [userCardsId, navigation]);
 
   return { tripData, loading };

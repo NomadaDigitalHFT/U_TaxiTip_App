@@ -3,9 +3,8 @@ import { Button, Linking } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { getFirestore, doc, onSnapshot } from "firebase/firestore";
 import UserFooter from "./../../components/common/UserFooter";
-import useTripETA from "./../../hooks/useTripETA"; // Hook para la ETA
-import { Container, Title, StyledText } from "./../../styles/StyleMapViewScreen";
-
+import useTripETA from "./../../hooks/useTripETA"; // Hook para ETA
+import { Container, StyledText, DriverName, PriceCircle, PriceText } from "./../../styles/StyleMapViewScreen";
 
 const UserMapViewScreen = ({ route }) => {
   const { tripId } = route.params || {};
@@ -36,13 +35,25 @@ const UserMapViewScreen = ({ route }) => {
 
   return (
     <Container>
-      <Title>🗺️ Tu Viaje</Title>
-      <StyledText>📍 Origen: {tripData?.lastLocation?.address || "No disponible"}</StyledText>
-      <StyledText>⏳ Tiempo estimado de llegada: {eta || "Calculando..."}</StyledText>
+      {/* 🔥 Círculo con el precio en el centro */}
+      <PriceCircle>
+        <PriceText>{tripData?.fare ? `${tripData.fare.toFixed(2)}€` : "N/A"}</PriceText>
+      </PriceCircle>
 
+      {/* Nombre del Conductor */}
+      <DriverName>👤 Conductor: {tripData?.driverName || "No disponible"}</DriverName>
+      
+      {/* Dirección de origen */}
+      <StyledText>📍 Origen: {tripData?.lastLocation?.address || "No disponible"}</StyledText>
+      
+      {/* Tiempo estimado de llegada */}
+      <StyledText>⏳ Llega en: {eta || "Calculando..."}</StyledText>
+
+      {/* Botón para llamar al conductor */}
       {tripData?.driverPhone && (
         <Button title="Llamar al Conductor" onPress={() => Linking.openURL(`tel:${tripData.driverPhone}`)} />
       )}
+
       <UserFooter />
     </Container>
   );

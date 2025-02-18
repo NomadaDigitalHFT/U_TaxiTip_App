@@ -1,8 +1,8 @@
 import React from "react";
-import { ActivityIndicator } from "react-native"; // ✅ Se agregó importación
+import { ActivityIndicator } from "react-native";
 import useCancelRequest from "./../../hooks/useCancelRequest";
 import Button from "./button";
-import theme from "./../../styles/theme"; // ✅ Se agregó importación
+import theme from "./../../styles/theme";
 
 const ButtonCancelCards = ({ userCardsId, screenName }) => {
   const { cancelRequest, loading } = useCancelRequest();
@@ -11,7 +11,7 @@ const ButtonCancelCards = ({ userCardsId, screenName }) => {
     <Button
       onPress={!loading ? () => cancelRequest(userCardsId, screenName) : null}
       disabled={loading}
-      type="danger" // ✅ Se agregó el tipo "danger" para que el botón sea rojo
+      type="danger"
       loading={loading}
     >
       Cancelar

@@ -12,9 +12,9 @@ const UserConfirmationScreen = ({ route }) => {
     <Container>
       <Card>
         <Title>🚖 Tu Viaje</Title>
-        <StyledText>📍 Origen: Ubicación seleccionada</StyledText>
+        <StyledText>📍 Origen: {tripData?.lastLocation?.address || "Ubicación seleccionada"}</StyledText>
         <StyledText>⏳ Un momento por favor, estamos buscando un taxi para ti...</StyledText>
-        {loading && <ActivityIndicator size="large" color={props => props.theme.colors.primary} />}  {/* Usar color dinámico del tema */}
+        {loading && <ActivityIndicator size="large" color={(props) => props.theme.colors.primary} />} {/* Color dinámico del tema */}
         
         {/* Solo mostrar el botón de cancelar */}
         <ButtonCancelCards userCardsId={userCardsId} screenName="UserHomeScreen" />

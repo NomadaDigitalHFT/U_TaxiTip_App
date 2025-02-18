@@ -5,23 +5,25 @@ const defaultFonts = {
 
 const lightTheme = {
   colors: {
-    background: "#B4BDCF",
-    primary: "#1565D6",
-    secondary: "#1E88E5",
+    background: "#f8f9fa",
+    primary: "#007bff",
+    secondary: "#6c757d",
     accent: "#FF9800",
-    text: "#333333",
-    textSecondary: "#666666",
-    border: "#E0E0E0",
+    text: "#212529",
+    textSecondary: "#495057",
+    border: "#dee2e6",
     card: "#FFFFFF",
+    inputBackground: "#ffffff",
+    inputBorder: "#ced4da",
+    inputText: "#000000",
     success: "#4CAF50",
     warning: "#FFC107",
     error: "#D32F2F",
     shadow: "rgba(0, 0, 0, 0.1)",
+    buttonBackground: "#007bff",
+    buttonText: "#ffffff",
   },
-  fonts: {
-    regular: defaultFonts.regular || "System", // Fallback a "System" si no está disponible
-    bold: defaultFonts.bold || "System",
-  },
+  fonts: defaultFonts,
   spacing: {
     small: "8px",
     medium: "16px",
@@ -36,23 +38,27 @@ const lightTheme = {
 
 const darkTheme = {
   colors: {
-    background: "#121212",
-    primary: "#2C99CB",
-    secondary: "#2CCBA2",
-    accent: "#F8EB22",
-    text: "#E3E3E3",
-    textSecondary: "#A0A0A0",
-    border: "#333333",
-    card: "#1E1E1E",
+    background: "#1e1e2e",
+    primary: "#89b4fa",
+    secondary: "#f5e0dc",
+    accent: "#FCA311",
+    text: "#cdd6f4",
+    textSecondary: "#a6adc8",
+    border: "#51576d",
+    card: "#2b2b3b",
+    inputBackground: "#4b4b5a",
+    inputBorder: "#b4befe",
+    inputText: "#ffffff",
+    placeholder: "#B0B0B0", /* 🔥 Placeholder más claro */
     success: "#4CAF50",
     warning: "#FF9800",
     error: "#F44336",
     shadow: "rgba(0, 0, 0, 0.3)",
+    buttonBackground: "#585b70",
+    buttonText: "#cdd6f4",
   },
-  fonts: {
-    regular: defaultFonts.regular || "System",
-    bold: defaultFonts.bold || "System",
-  },
+
+  fonts: defaultFonts,
   spacing: {
     small: "8px",
     medium: "16px",
@@ -66,6 +72,3 @@ const darkTheme = {
 };
 
 export { lightTheme, darkTheme };
-
-
-

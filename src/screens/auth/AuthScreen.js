@@ -17,6 +17,7 @@ import {
 import { setDoc, doc } from "firebase/firestore";
 import { auth, db } from "./../../firebase/firebaseConfig";
 import Alertas from "./../../elements/Alertas/Alertas"; // Componente de alertas
+import { useTheme } from "styled-components/native"; // Se importa el theme
 
 const AuthScreen = ({ navigation }) => {
   const [isLogin, setIsLogin] = useState(true);
@@ -32,6 +33,8 @@ const AuthScreen = ({ navigation }) => {
   const [alertMessage, setAlertMessage] = useState("");
   const [alertType, setAlertType] = useState("success");
   const [alertVisible, setAlertVisible] = useState(false);
+
+  const theme = useTheme(); // Accede al tema actual
 
   // Función para mostrar alertas
   const showAlert = (message, type = "success") => {
@@ -129,19 +132,55 @@ const AuthScreen = ({ navigation }) => {
 
       {!isLogin && (
         <>
-          <Input placeholder="Nombre" value={formData.name} onChangeText={(value) => handleInputChange("name", value)} />
-          <Input placeholder="Apellidos" value={formData.lastName} onChangeText={(value) => handleInputChange("lastName", value)} />
-          <Input placeholder="Teléfono" value={formData.phone} keyboardType="phone-pad" onChangeText={(value) => handleInputChange("phone", value)} />
+          <Input
+            placeholder="Nombre"
+            placeholderTextColor={theme.colors.placeholder || "#B0B0B0"} /* ✅ Color de placeholder corregido */
+            value={formData.name}
+            onChangeText={(value) => handleInputChange("name", value)}
+          />
+          <Input
+            placeholder="Apellidos"
+            placeholderTextColor={theme.colors.placeholder || "#B0B0B0"}
+            value={formData.lastName}
+            onChangeText={(value) => handleInputChange("lastName", value)}
+          />
+          <Input
+            placeholder="Teléfono"
+            placeholderTextColor={theme.colors.placeholder || "#B0B0B0"}
+            value={formData.phone}
+            keyboardType="phone-pad"
+            onChangeText={(value) => handleInputChange("phone", value)}
+          />
         </>
       )}
 
-      <Input placeholder="Correo Electrónico" value={formData.email} onChangeText={(value) => handleInputChange("email", value)} keyboardType="email-address" />
-      <Input placeholder="Contraseña" value={formData.password} onChangeText={(value) => handleInputChange("password", value)} secureTextEntry />
-      {!isLogin && <Input placeholder="Confirmar Contraseña" value={formData.confirmPassword} onChangeText={(value) => handleInputChange("confirmPassword", value)} secureTextEntry />}
+      <Input
+        placeholder="Correo Electrónico"
+        placeholderTextColor={theme.colors.placeholder || "#B0B0B0"}
+        value={formData.email}
+        onChangeText={(value) => handleInputChange("email", value)}
+        keyboardType="email-address"
+      />
+      <Input
+        placeholder="Contraseña"
+        placeholderTextColor={theme.colors.placeholder || "#B0B0B0"}
+        value={formData.password}
+        onChangeText={(value) => handleInputChange("password", value)}
+        secureTextEntry
+      />
+      {!isLogin && (
+        <Input
+          placeholder="Confirmar Contraseña"
+          placeholderTextColor={theme.colors.placeholder || "#B0B0B0"}
+          value={formData.confirmPassword}
+          onChangeText={(value) => handleInputChange("confirmPassword", value)}
+          secureTextEntry
+        />
+      )}
 
-      {isLoading ? <ActivityIndicator size="large" color="#0000ff" /> : (
+      {isLoading ? <ActivityIndicator size="large" color={theme.colors.primary} /> : (
         <StyledButton onPress={handleAuth}>
-          <ButtonText>{isLogin ? "Entrar" : "Registrarse"}</ButtonText>
+          <ButtonText>{isLogin ? "Iniciar Sesión" : "Registrarse"}</ButtonText>
         </StyledButton>
       )}
 

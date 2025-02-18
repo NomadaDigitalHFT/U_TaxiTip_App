@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
-import MapView, { Marker } from "react-native-maps";
+import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import * as Location from "expo-location";
 import { TextInput } from "react-native";
-import ButtonBuildCards from "./../../elements/Buttons/buttonBuildCards";  // Asegúrate de que este componente también use styled-components
+import ButtonBuildCards from "./../../elements/Buttons/buttonBuildCards";
 
-import { Container, MapContainer, Title, InputContainer } from "./../../styles/StyleGeoLocation";  // Importamos los estilos actualizados
+import { Container, MapContainer, Title, InputContainer } from "./../../styles/StyleGeoLocation";
 
 const UserGeoLocationScreen = () => {
   const [location, setLocation] = useState(null);
@@ -19,30 +19,36 @@ const UserGeoLocationScreen = () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
         setErrorMsg("Permiso de ubicación denegado. Ingresa tu dirección manualmente.");
-        setLocation({ coords: { latitude: 0, longitude: 0 } }); // Fallback para evitar error de undefined
+        setLocation({ coords: { latitude: 0, longitude: 0 } });
+        return;
       }
 
       let currentLocation = await Location.getCurrentPositionAsync({});
       setLocation(currentLocation);
 
-      let reverseGeocode = await Location.reverseGeocodeAsync({
-        latitude: currentLocation.coords.latitude,
-        longitude: currentLocation.coords.longitude,
-      });
+      try {
+        let reverseGeocode = await Location.reverseGeocodeAsync({
+          latitude: currentLocation.coords.latitude,
+          longitude: currentLocation.coords.longitude,
+        });
 
-      if (reverseGeocode.length > 0) {
-        const { street, name, streetNumber } = reverseGeocode[0];
-        setAddress(`${street || name} ${streetNumber ? streetNumber : ''}`.trim());
+        if (reverseGeocode.length > 0) {
+          const { street, name, streetNumber } = reverseGeocode[0];
+          setAddress(`${street || name} ${streetNumber ? streetNumber : ''}`.trim());
+        }
+      } catch (error) {
+        setErrorMsg("No se pudo obtener la dirección.");
       }
     })();
   }, []);
 
   return (
     <Container>
-      <Title>UserGeoLocationScreen.js </Title>
+      <Title>UserGeoLocationScreen.js</Title>
       {location && location.coords ? (
         <MapContainer>
           <MapView
+            provider={PROVIDER_GOOGLE} // ✅ Se fuerza a usar Google Maps
             style={{ flex: 1 }}
             initialRegion={{
               latitude: location.coords.latitude,
@@ -65,22 +71,27 @@ const UserGeoLocationScreen = () => {
       )}
 
       <InputContainer>
-        <TextInput
+        <StyledInput
           placeholder="Confirma o edita tu dirección"
           value={address}
           onChangeText={setAddress}
-          style={{
-            marginBottom: 10,
-            padding: 10,
-            borderWidth: 1,
-            borderRadius: 5,
-          }}
+          placeholderTextColor="#B0B0B0" // ✅ Mejor visibilidad en modo oscuro
         />
         <ButtonBuildCards address={address} location={location} />
       </InputContainer>
     </Container>
   );
 };
+
+const StyledInput = styled(TextInput)`
+  margin-bottom: 10px;
+  padding: 10px;
+  border-width: 1px;
+  border-radius: 5px;
+  border-color: ${(props) => props.theme.colors.border || "#DDD"};
+  background-color: ${(props) => props.theme.colors.inputBackground || "#FFF"};
+  color: ${(props) => props.theme.colors.text || "#000"};
+`;
 
 export default UserGeoLocationScreen;
 

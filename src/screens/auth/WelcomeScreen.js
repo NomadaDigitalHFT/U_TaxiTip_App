@@ -20,18 +20,15 @@ const WelcomeScreen = () => {
 
   return (
     <Container>
-      <Image source={require("./../../assets/icons/Moneda_taxitip.png")} style={{ width: 100, height: 100, borderRadius: 50, margin: 20 }} />
+      <Image source={require("./../../../assets/Moneda_taxitip.png")} style={{ width: 100, height: 100, borderRadius: 50, margin: 20 }} />
       <Title>¡Bienvenido a TaxiTip!</Title>
-      <Subtitle>Elige tu rol para continuar</Subtitle>
+   
 
       <StyledButton onPress={() => handleNavigation("usuario")}>
         <ButtonText>Usuario</ButtonText>
       </StyledButton>
 
-      {/* Puedes agregar un botón similar para "Conductor" si lo necesitas */}
-      <SwitchButton>
-        <SwitchButtonText>¿Eres conductor? Ingresa aquí</SwitchButtonText>
-      </SwitchButton>
+ 
     </Container>
   );
 };

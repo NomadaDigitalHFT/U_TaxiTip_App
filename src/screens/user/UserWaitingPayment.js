@@ -1,0 +1,1 @@
+// En esta pantalla mostraremos un circulo con el precio que se va a cobrar por el viaje 

@@ -3,6 +3,7 @@ import styled from 'styled-components/native';
 import { TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from 'styled-components/native';
 
 const FooterContainer = styled.View`
   position: absolute;
@@ -29,23 +30,24 @@ const FooterText = styled.Text`
 
 const Footer = () => {
   const navigation = useNavigation();
+  const theme = useTheme(); // Obtiene el tema actual
 
   return (
     <FooterContainer>
       {/* Home Button */}
       <FooterButton onPress={() => navigation.navigate('UserHomeScreen')}>
-        <Ionicons name="home" size={24} color={props => props.theme.colors.primary} />
+        <Ionicons name="home" size={24} color={theme.colors.primary} />
         <FooterText>Home</FooterText>
       </FooterButton>
 
       {/* Action Button (Center) */}
       <FooterButton onPress={() => console.log('Center Action Pressed')}>
-        <Ionicons name="add-circle" size={36} color={props => props.theme.colors.primary} />
+        <Ionicons name="add-circle" size={36} color={theme.colors.primary} />
       </FooterButton>
 
       {/* Settings Button */}
-      <FooterButton onPress={() => navigation.navigate('SettingsScreen')}>
-        <Ionicons name="settings" size={24} color={props => props.theme.colors.primary} />
+      <FooterButton onPress={() => navigation.navigate('UserSettingScreen')}>
+        <Ionicons name="settings" size={24} color={theme.colors.primary} />
         <FooterText>Configuración</FooterText>
       </FooterButton>
     </FooterContainer>
@@ -53,3 +55,4 @@ const Footer = () => {
 };
 
 export default Footer;
+
